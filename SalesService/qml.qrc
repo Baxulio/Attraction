@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>HomeForm.ui.qml</file>
+        <file>Page1Form.ui.qml</file>
+        <file>Page2Form.ui.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>icons/gallery/index.theme</file>
+        <file>icons/gallery/20x20/menu.png</file>
+        <file>icons/gallery/20x20/drawer.png</file>
+        <file>icons/gallery/20x20/back.png</file>
+        <file>icons/gallery/20x20@2/menu.png</file>
+        <file>icons/gallery/20x20@2/drawer.png</file>
+        <file>icons/gallery/20x20@2/back.png</file>
+        <file>icons/gallery/20x20@3/menu.png</file>
+        <file>icons/gallery/20x20@3/drawer.png</file>
+        <file>icons/gallery/20x20@3/back.png</file>
+        <file>icons/gallery/20x20@4/menu.png</file>
+        <file>icons/gallery/20x20@4/drawer.png</file>
+        <file>icons/gallery/20x20@4/back.png</file>
+    </qresource>
+</RCC>

@@ -1,4 +1,10 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    Core
+    Core \
+    AccessController \
+    Client \
+    SalesService
+
+AccessController.depends = Core
+Client.depends = Core
