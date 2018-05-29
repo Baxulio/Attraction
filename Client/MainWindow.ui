@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>588</width>
-    <height>450</height>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,6 +80,14 @@
            <number>1</number>
           </property>
           <widget class="QWidget" name="bracer_registration_toolBox">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>564</width>
+             <height>267</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Регистрация браслета</string>
            </attribute>
@@ -280,7 +288,7 @@
              <x>0</x>
              <y>0</y>
              <width>564</width>
-             <height>245</height>
+             <height>267</height>
             </rect>
            </property>
            <attribute name="label">
@@ -439,7 +447,7 @@
              <x>0</x>
              <y>0</y>
              <width>564</width>
-             <height>245</height>
+             <height>267</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1199,6 +1207,7 @@
    <addaction name="actionDisconnect"/>
    <addaction name="separator"/>
    <addaction name="actionConfigure"/>
+   <addaction name="salesMarket"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionConnect">
@@ -1264,6 +1273,15 @@
   <action name="actionAbout">
    <property name="text">
     <string>Про ...</string>
+   </property>
+  </action>
+  <action name="salesMarket">
+   <property name="icon">
+    <iconset resource="clientresources.qrc">
+     <normaloff>:/images/money.png</normaloff>:/images/money.png</iconset>
+   </property>
+   <property name="text">
+    <string>Отдел продажи</string>
    </property>
   </action>
  </widget>

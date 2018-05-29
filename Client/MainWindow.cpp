@@ -16,6 +16,8 @@
 #include <QSqlQuery>
 #include <QSqlTableModel>
 #include "ProxyModel.h"
+#include "PriceRules.h"
+
 #include <QDebug>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -104,19 +106,18 @@ void MainWindow::showStatusMessage(const QString &message)
 
 void MainWindow::makeConnection()
 {
-    QSqlError err=bDb.connect("Attraction",
-                              bSettings->serverSettings().host,
-                              bSettings->serverSettings().user,
-                              bSettings->serverSettings().password,
-                              bSettings->serverSettings().port);
-    if(err.type() != QSqlError::NoError){
-        showStatusMessage(QString("<font color='red'>%1").arg(err.text()));
+    if(!bDb.connectToDatabase(bSettings->serverSettings().host,
+                    bSettings->serverSettings().user,
+                    bSettings->serverSettings().password,
+                    bSettings->serverSettings().port)){
+        showStatusMessage(QString("<font color='red'>%1").arg(bDb.lastError().text()));
         return;
     }
+
     ui->actionConnect->setEnabled(false);
     ui->actionDisconnect->setEnabled(true);
-    showStatusMessage("<font color='green'>Successfully connected!");
 
+    showStatusMessage("<font color='green'>Successfully connected!");
     emit ui->tabWidget->currentChanged(ui->tabWidget->currentIndex());
 }
 
@@ -317,4 +318,16 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
     ui->union_tableWidget->removeRow(ui->union_tableWidget->currentRow());
+}
+
+void MainWindow::on_salesMarket_triggered()
+{
+    if(ui->actionConnect->isEnabled())
+    {
+        showStatusMessage("Can't operate! First connect!");
+        return;
+    }
+    PriceRules priceRules(this);
+    priceRules.setModal(true);
+    priceRules.exec();
 }

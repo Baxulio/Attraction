@@ -1,9 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>HomeForm.ui.qml</file>
-        <file>Page1Form.ui.qml</file>
-        <file>Page2Form.ui.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>icons/gallery/index.theme</file>
         <file>icons/gallery/20x20/menu.png</file>
@@ -18,5 +15,14 @@
         <file>icons/gallery/20x20@4/menu.png</file>
         <file>icons/gallery/20x20@4/drawer.png</file>
         <file>icons/gallery/20x20@4/back.png</file>
+        <file>Core.qml</file>
+        <file>CommonToolBar.qml</file>
+        <file>ProductTypesPage.qml</file>
+        <file>ProductsPage.qml</file>
+        <file>FormForm.ui.qml</file>
+        <file>icons/gallery/20x20/card.png</file>
+        <file>icons/gallery/20x20/cart.png</file>
+        <file>icons/gallery/20x20/refresh.png</file>
+        <file>icons/gallery/20x20/store.png</file>
     </qresource>
 </RCC>

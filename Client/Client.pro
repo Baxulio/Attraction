@@ -29,19 +29,22 @@ SOURCES += \
     SubscriptionDelegate.cpp \
     SettingsDialog.cpp \
     ProxyModel.cpp \
-    WieagandReaderDialog.cpp
+    WieagandReaderDialog.cpp \
+    PriceRules.cpp
 
 HEADERS += \
         MainWindow.h \
     SubscriptionDelegate.h \
     SettingsDialog.h \
     ProxyModel.h \
-    WieagandReaderDialog.h
+    WieagandReaderDialog.h \
+    PriceRules.h
 
 FORMS += \
         MainWindow.ui \
     SettingsDialog.ui \
-    WieagandReaderDialog.ui
+    WieagandReaderDialog.ui \
+    PriceRules.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore

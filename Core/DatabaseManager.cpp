@@ -26,21 +26,32 @@ DatabaseManager::~DatabaseManager()
     closeConnection();
 }
 
-QSqlError DatabaseManager::connect(const QString &path, const QString &host, const QString &login, const QString &password, int port)
-{
-    QSqlError err;
-    bDatabase->setDatabaseName(path);
-    bDatabase->setHostName(host);
-    bDatabase->setPort(port);
-    if(!bDatabase->open(login,password)){
-        err = bDatabase->lastError();
-    }
-    return err;
-}
-
 void DatabaseManager::closeConnection()
 {
     bDatabase->close();
+    emit connectionChanged();
+}
+
+bool DatabaseManager::isConnected()
+{
+    return bDatabase->isOpen();
+}
+
+QSqlError DatabaseManager::lastError()
+{
+    return bDatabase->lastError();
+}
+
+bool DatabaseManager::connectToDatabase(const QString &host, const QString &user, const QString &password, const int &port, const QString &database)
+{
+    bDatabase->setDatabaseName(database);
+    bDatabase->setHostName(host);
+    bDatabase->setPort(port);
+    if(!bDatabase->open(user,password)){
+        return false;
+    }
+    emit connectionChanged();
+    return true;
 }
 
 DatabaseManager::DatabaseManager():
