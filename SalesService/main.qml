@@ -2,8 +2,6 @@ import QtQuick 2.10
 import QtQuick.Controls 2.3
 import Qt.labs.settings 1.0
 
-import Core 1.0
-
 ApplicationWindow {
     id: window
     visible: true
@@ -33,7 +31,7 @@ ApplicationWindow {
             source: "icons/gallery/20x20@4/menu.png"
             fillMode: Image.PreserveAspectFit
         }
-        Component.onCompleted: popup.open()
+//        Component.onCompleted: popup.open()
     }
 
     SwipeView {
@@ -49,7 +47,6 @@ ApplicationWindow {
                 id: stackView
                 initialItem: ProductTypesPage {}
                 anchors.fill: parent
-                Component.onCompleted: Core.headerTitle = "Выберите тип продукта"
             }
 
         }

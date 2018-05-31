@@ -7,11 +7,15 @@
 
 void DatabaseManager::debugQuery(const QSqlQuery& query)
 {
-    if (query.lastError().type() == QSqlError::ErrorType::NoError) {
+    switch (query.lastError().type()) {
+    case QSqlError::ErrorType::NoError:
         qDebug() << "Query OK:"  << query.lastQuery();
-    } else {
+        break;
+    default:
         qWarning() << "Query KO:" << query.lastError().text();
         qWarning() << "Query text:" << query.lastQuery();
+        instance().closeConnection();
+        break;
     }
 }
 
@@ -23,13 +27,13 @@ DatabaseManager&DatabaseManager::instance()
 
 DatabaseManager::~DatabaseManager()
 {
-    closeConnection();
+    bDatabase->close();
 }
 
 void DatabaseManager::closeConnection()
 {
     bDatabase->close();
-    emit connectionChanged();
+    emit connectionChanged(false);
 }
 
 bool DatabaseManager::isConnected()
@@ -42,16 +46,15 @@ QSqlError DatabaseManager::lastError()
     return bDatabase->lastError();
 }
 
-bool DatabaseManager::connectToDatabase(const QString &host, const QString &user, const QString &password, const int &port, const QString &database)
+void DatabaseManager::connectToDatabase(const QString &host, const QString &user, const QString &password, const int &port, const QString &database)
 {
     bDatabase->setDatabaseName(database);
     bDatabase->setHostName(host);
     bDatabase->setPort(port);
     if(!bDatabase->open(user,password)){
-        return false;
+        closeConnection();
     }
-    emit connectionChanged();
-    return true;
+    emit connectionChanged(true);
 }
 
 DatabaseManager::DatabaseManager():

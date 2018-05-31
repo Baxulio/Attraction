@@ -9,9 +9,10 @@ class MainWindow;
 }
 
 class SettingsDialog;
-class QLabel;
-class QPushButton;
-class ProxyModel;
+class OperationsWithBracer;
+class Monitoring;
+class HistoryForm;
+
 class QSqlTableModel;
 
 class MainWindow : public QMainWindow
@@ -24,40 +25,38 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QLabel *label;
-    QPushButton *refreshButton;
     DatabaseManager &bDb;
-    SettingsDialog *bSettings;
 
-    QSqlTableModel *statusModel, *historyModel, *tariffModel;
-    ProxyModel *statusProxyModel, *historyProxyModel;
+    SettingsDialog *bSettings;
+    OperationsWithBracer *bOperationsWithBracer;
+    Monitoring *bMonitoring;
+    HistoryForm *bHistoryForm;
+
+    QSqlTableModel *tariffModel;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
-    void about();
-    void showStatusMessage(const QString &message);
-    void makeConnection();
-    void makeDisconnection();
+//    void on_check_bracer_status_pushButton_clicked();
 
-    void on_check_bracer_status_pushButton_clicked();
+//    void on_proceed_bracer_pushButton_clicked();
 
-    void on_proceed_bracer_pushButton_clicked();
+//    void on_start_unio_process_but_clicked();
 
-    void on_start_unio_process_but_clicked();
+//    void on_pushButton_clicked();
 
-    void on_pushButton_clicked();
+//    void on_pushButton_2_clicked();
 
-    void on_pushButton_2_clicked();
-
-    void on_salesMarket_triggered();
+//    void on_salesMarket_triggered();
 
 private:
     void initActionsConnections();
-
     void readSettings();
     void writeSettings();
+
+signals:
+    void showStatusMessage(const QString &message);
 };
 
 #endif // MAINWINDOW_H

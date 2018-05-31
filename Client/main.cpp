@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Attraction");
     QCoreApplication::setApplicationVersion(QT_VERSION_STR);
 
-    app.setStyle("Fusion");
+//    app.setStyle("Fusion");
     MainWindow w;
     w.show();
 

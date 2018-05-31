@@ -30,7 +30,10 @@ SOURCES += \
     SettingsDialog.cpp \
     ProxyModel.cpp \
     WieagandReaderDialog.cpp \
-    PriceRules.cpp
+    PriceRules.cpp \
+    OperationsWithBracer.cpp \
+    Monitoring.cpp \
+    HistoryForm.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -38,13 +41,19 @@ HEADERS += \
     SettingsDialog.h \
     ProxyModel.h \
     WieagandReaderDialog.h \
-    PriceRules.h
+    PriceRules.h \
+    OperationsWithBracer.h \
+    Monitoring.h \
+    HistoryForm.h
 
 FORMS += \
         MainWindow.ui \
     SettingsDialog.ui \
     WieagandReaderDialog.ui \
-    PriceRules.ui
+    PriceRules.ui \
+    OperationsWithBracer.ui \
+    Monitoring.ui \
+    HistoryForm.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore

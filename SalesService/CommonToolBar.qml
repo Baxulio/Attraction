@@ -5,8 +5,9 @@ import QtQuick.Controls.Universal 2.1
 import QtQuick.Layouts 1.3
 
 import Core 1.0
-
 ToolBar {
+    property alias titleLabel : titleLabel
+
     Material.foreground: "white"
 
     RowLayout{
@@ -19,19 +20,20 @@ ToolBar {
             font.pixelSize: Qt.application.font.pixelSize * 1.6
             onClicked: {
                 if (stackView.depth > 1) {
-                    stackView.pop()
+                    stackView.pop();
+                    Core.headerTitle = "";
                 }
             }
-            visible: stackView.depth > 1
+            visible: stackView.depth > 1 && swipeView.currentIndex==1
         }
         Label {
             id: titleLabel
-            text: Core.headerTitle
             font.pixelSize: 20
             elide: Label.ElideRight
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
             Layout.fillWidth: true
+            text: Core.headerTitle
         }
         ToolButton {
             icon.name: "menu"

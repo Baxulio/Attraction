@@ -33,7 +33,7 @@ public:
     QSqlError lastError();
 
 public slots:
-    bool connectToDatabase(const QString& host = HOST,
+    void connectToDatabase(const QString& host = HOST,
                            const QString& user = USER,
                            const QString& password = PASSWORD,
                            const int &port = PORT,
@@ -48,7 +48,7 @@ private:
     std::unique_ptr<QSqlDatabase> bDatabase;
 
 signals:
-    void connectionChanged();
+    void connectionChanged(const bool status);
 };
 
 #endif // DATABASEMANAGER_H

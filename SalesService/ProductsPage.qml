@@ -99,9 +99,7 @@ Page {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    //Core.headerTitle = model.title
                     parent.GridView.view.currentIndex = index;
-                    //page.StackView.view.push("qrc:/ProductsPage.qml", { typeId: model.id });
                 }
             }
         }
