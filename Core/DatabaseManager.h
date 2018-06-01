@@ -49,6 +49,7 @@ private:
 
 signals:
     void connectionChanged(const bool status);
+    void refresh();
 };
 
 #endif // DATABASEMANAGER_H

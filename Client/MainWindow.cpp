@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QCloseEvent>
 #include <QDesktopWidget>
+#include <QMenu>
 
 #include <QLabel>
 #include <QPushButton>
@@ -14,13 +15,15 @@
 #include <QSqlTableModel>
 
 #include "SettingsDialog.h"
-//#include "OperationsWithBracer.h"
-//#include "Monitoring.h"
-//#include "HistoryForm.h"
+#include "RegisterForm.h"
+#include "UniteForm.h"
+
+#include "OperationsWithBracer.h"
+#include "Monitoring.h"
+#include "HistoryForm.h"
 #include "PriceRules.h"
 
 #include <QDebug>
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -33,10 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QLabel *statusLabel = new QLabel(this);
-    ui->statusBar->addWidget(statusLabel);
-    connect(this, &MainWindow::showStatusMessage, [statusLabel](const QString &msg){
-        statusLabel->setText(msg);
+    connect(this, &MainWindow::showStatusMessage, [this](const QString &msg){
+        this->ui->status_label->setText(msg);
     });
 
     readSettings();
@@ -54,9 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
         else {
             emit showStatusMessage(QString("<font color='red'>%1 </font><font color='grey'>Disconnected!").arg(bDb.lastError().databaseText()));
         }
-        ui->actionConnect->setEnabled(!status);
-        ui->actionDisconnect->setEnabled(status);
-//        centralWidget()->setEnabled(status);
+        ui->connectButton->setEnabled(!status);
+        ui->disconnectButton->setEnabled(status);
         ui->splitter->setEnabled(status);
     });
 
@@ -99,11 +99,62 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::initActionsConnections()
 {
-    connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::close);
-    //connect(ui->actionConfigure, &QAction::triggered, bSettings, &SettingsDialog::show);
-    connect(ui->configureButton, &QPushButton::clicked, bSettings, &SettingsDialog::show);
+    /////////////////Autoupdate///////////////////////////////////////
+    /// \brief autoUpdate_menu
+    ///
+    QMenu *autoUpdate_menu = new QMenu("Автообновление", this);
+    autoUpdate_menu->addAction(ui->action_disabled_autorefresh);
+    autoUpdate_menu->addAction(ui->action_autorefresh_1_sec);
+    autoUpdate_menu->addAction(ui->action_autorefresh_5_sec);
+    autoUpdate_menu->addAction(ui->action_autorefresh_10_sec);
+    autoUpdate_menu->addAction(ui->action_autorefresh_20_sec);
+    autoUpdate_menu->addAction(ui->action_autorefresh_35_sec);
+    autoUpdate_menu->addAction(ui->action_autorefresh_1_min);
+    connect(ui->action_autorefresh_1_sec, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_autorefresh_1_sec->text());
+        ui->autoUpdate_button->setAutoRepeat(true);
+        ui->autoUpdate_button->setAutoRepeatDelay(1000);
 
-    //    connect(ui->actionAbout, &QAction::triggered, [this](){
+    });
+    connect(ui->action_autorefresh_5_sec, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_autorefresh_5_sec->text());
+        ui->autoUpdate_button->setAutoRepeat(true);
+        ui->autoUpdate_button->setAutoRepeatDelay(5000);
+
+    });
+    connect(ui->action_autorefresh_10_sec, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_autorefresh_10_sec->text());
+        ui->autoUpdate_button->setAutoRepeat(true);
+        ui->autoUpdate_button->setAutoRepeatDelay(10000);
+
+    });
+    connect(ui->action_autorefresh_20_sec, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_autorefresh_20_sec->text());
+        ui->autoUpdate_button->setAutoRepeat(true);
+        ui->autoUpdate_button->setAutoRepeatDelay(20000);
+
+    });
+    connect(ui->action_autorefresh_35_sec, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_autorefresh_35_sec->text());
+        ui->autoUpdate_button->setAutoRepeat(true);
+        ui->autoUpdate_button->setAutoRepeatDelay(35000);
+
+    });
+    connect(ui->action_autorefresh_1_min, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_autorefresh_1_min->text());
+        ui->autoUpdate_button->setAutoRepeat(true);
+        ui->autoUpdate_button->setAutoRepeatDelay(60000);
+
+    });
+    connect(ui->action_disabled_autorefresh, &QAction::triggered, [this](){
+        ui->autoUpdate_button->setText(ui->action_disabled_autorefresh->text());
+        ui->autoUpdate_button->setAutoRepeat(false);
+    });
+    ui->autoUpdate_button->setMenu(autoUpdate_menu);
+    connect(ui->autoUpdate_button, &QToolButton::clicked, [this](){emit bDb.refresh();});
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    connect(ui->configureButton, &QPushButton::clicked, bSettings, &SettingsDialog::show);
     connect(ui->aboutButton, &QPushButton::clicked, [this](){
         QMessageBox::about(this, tr("About Attraction"),
                            tr("The <b>Attraction</b> is an Access Controll System for amusement parks "
@@ -118,17 +169,38 @@ void MainWindow::initActionsConnections()
                               "<p align='right'>Author: <b>Nurnazarov Bakhmanyor Yunuszoda</b></p> <a align='right' href="
                               "'http://bahman.byethost18.com'>[bahman.byethost18.com]</a>"));
     });
-    //    connect(ui->actionConnect,&QAction::triggered, [this](){
     connect(ui->connectButton,&QPushButton::clicked, [this](){
         bDb.connectToDatabase(bSettings->serverSettings().host,
                               bSettings->serverSettings().user,
                               bSettings->serverSettings().password,
                               bSettings->serverSettings().port);
     });
-    //    connect(ui->actionDisconnect,&QAction::triggered, [this](){
     connect(ui->disconnectButton,&QPushButton::clicked, [this](){
         bDb.closeConnection();
     });
+    connect(ui->register_button, &QPushButton::toggled, [this](bool checked){
+       if(!checked)return;
+       for (int i = 0; i < ui->stackedWidget->count(); i++) {
+            if(dynamic_cast<RegisterForm*>(ui->stackedWidget->widget(i))){
+                ui->stackedWidget->setCurrentIndex(i);
+                return;
+            }
+       }
+       RegisterForm *registerForm = new RegisterForm(this);
+       ui->stackedWidget->setCurrentIndex(ui->stackedWidget->addWidget(registerForm));
+    });
+    connect(ui->unite_button, &QPushButton::toggled, [this](bool checked){
+       if(!checked)return;
+       for (int i = 0; i < ui->stackedWidget->count(); i++) {
+            if(dynamic_cast<UniteForm*>(ui->stackedWidget->widget(i))){
+                ui->stackedWidget->setCurrentIndex(i);
+                return;
+            }
+       }
+       UniteForm *uniteForm = new UniteForm(this);
+       ui->stackedWidget->setCurrentIndex(ui->stackedWidget->addWidget(uniteForm));
+    });
+
 }
 
 void MainWindow::readSettings()

@@ -33,7 +33,10 @@ SOURCES += \
     PriceRules.cpp \
     OperationsWithBracer.cpp \
     Monitoring.cpp \
-    HistoryForm.cpp
+    HistoryForm.cpp \
+    RegisterForm.cpp \
+    UniteForm.cpp \
+    CashForm.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -44,16 +47,21 @@ HEADERS += \
     PriceRules.h \
     OperationsWithBracer.h \
     Monitoring.h \
-    HistoryForm.h
+    HistoryForm.h \
+    RegisterForm.h \
+    UniteForm.h \
+    CashForm.h
 
 FORMS += \
         MainWindow.ui \
     SettingsDialog.ui \
     WieagandReaderDialog.ui \
     PriceRules.ui \
-    OperationsWithBracer.ui \
     Monitoring.ui \
-    HistoryForm.ui
+    HistoryForm.ui \
+    RegisterForm.ui \
+    UniteForm.ui \
+    CashForm.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore
