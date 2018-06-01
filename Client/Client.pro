@@ -36,7 +36,8 @@ SOURCES += \
     HistoryForm.cpp \
     RegisterForm.cpp \
     UniteForm.cpp \
-    CashForm.cpp
+    StatusForm.cpp \
+    TransactionItem.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -50,7 +51,8 @@ HEADERS += \
     HistoryForm.h \
     RegisterForm.h \
     UniteForm.h \
-    CashForm.h
+    StatusForm.h \
+    TransactionItem.h
 
 FORMS += \
         MainWindow.ui \
@@ -61,7 +63,8 @@ FORMS += \
     HistoryForm.ui \
     RegisterForm.ui \
     UniteForm.ui \
-    CashForm.ui
+    StatusForm.ui \
+    TransactionItem.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore

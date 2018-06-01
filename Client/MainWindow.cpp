@@ -17,6 +17,7 @@
 #include "SettingsDialog.h"
 #include "RegisterForm.h"
 #include "UniteForm.h"
+#include "StatusForm.h"
 
 #include "OperationsWithBracer.h"
 #include "Monitoring.h"
@@ -199,6 +200,17 @@ void MainWindow::initActionsConnections()
        }
        UniteForm *uniteForm = new UniteForm(this);
        ui->stackedWidget->setCurrentIndex(ui->stackedWidget->addWidget(uniteForm));
+    });
+    connect(ui->status_button, &QPushButton::toggled, [this](bool checked){
+       if(!checked)return;
+       for (int i = 0; i < ui->stackedWidget->count(); i++) {
+            if(dynamic_cast<StatusForm*>(ui->stackedWidget->widget(i))){
+                ui->stackedWidget->setCurrentIndex(i);
+                return;
+            }
+       }
+       StatusForm *statusForm = new StatusForm(this);
+       ui->stackedWidget->setCurrentIndex(ui->stackedWidget->addWidget(statusForm));
     });
 
 }

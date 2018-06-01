@@ -467,7 +467,7 @@ QPushButton:checked{
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="cash_button">
+         <widget class="QPushButton" name="status_button">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -487,49 +487,11 @@ QPushButton:checked{
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="text">
-           <string>Кэш</string>
+           <string>Статус</string>
           </property>
           <property name="icon">
            <iconset resource="clientresources.qrc">
-            <normaloff>:/images/mimiGlyphs/mimiGlyphs/png/5.png</normaloff>:/images/mimiGlyphs/mimiGlyphs/png/5.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="additional_button">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>25</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>MS Shell Dlg 2</family>
-            <pointsize>8</pointsize>
-            <weight>9</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="text">
-           <string>Дополнительное</string>
-          </property>
-          <property name="icon">
-           <iconset resource="clientresources.qrc">
-            <normaloff>:/images/mimiGlyphs/mimiGlyphs/png/27.png</normaloff>:/images/mimiGlyphs/mimiGlyphs/png/27.png</iconset>
+            <normaloff>:/images/mimiGlyphs/mimiGlyphs/png/33.png</normaloff>:/images/mimiGlyphs/mimiGlyphs/png/33.png</iconset>
           </property>
           <property name="checkable">
            <bool>true</bool>
