@@ -14,7 +14,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp \
     TableModel.cpp \
-    CustomQuickImageProvider.cpp
+    CustomQuickImageProvider.cpp \
+    StatusModel.cpp
 
 RESOURCES += qml.qrc
 
@@ -31,7 +32,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     TableModel.h \
-    CustomQuickImageProvider.h
+    CustomQuickImageProvider.h \
+    StatusModel.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore

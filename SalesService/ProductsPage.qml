@@ -68,7 +68,7 @@ Page {
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                     anchors.horizontalCenter: parent.horizontalCenter
                     fillMode: Image.PreserveAspectFit
-                    source: model.icon
+                    source: "image://products/"+index
 
                 }
 
@@ -86,7 +86,7 @@ Page {
                 Text {
                     id: text3
                     color: "grey"
-                    text: qsTr("This is a very big comment that can be added and etc")
+                    text: model.comment
                     Layout.fillHeight: true
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                     font.pixelSize: 12

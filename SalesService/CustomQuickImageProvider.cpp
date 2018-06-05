@@ -14,7 +14,7 @@ void CustomQuickImageProvider::setTableModel(QSqlRelationalTableModel &model)
 QImage CustomQuickImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
     QImage tempImage;
-    tempImage.loadFromData(tableModel->data(tableModel->index(id.toInt(), tableModel->roleNames().key("icon")), Qt::EditRole).toByteArray(), "PNG");
+    tempImage.loadFromData(tableModel->data(tableModel->index(id.toInt(),tableModel->fieldIndex("icon")), Qt::EditRole).toByteArray(), "PNG");
 
     size->setHeight(tempImage.height());
     size->setWidth(tempImage.width());

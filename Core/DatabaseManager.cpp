@@ -2,8 +2,6 @@
 
 #include <QSqlDatabase>
 #include <QDebug>
-#include <QSqlError>
-#include <QSqlQuery>
 
 void DatabaseManager::debugQuery(const QSqlQuery& query)
 {
@@ -17,6 +15,12 @@ void DatabaseManager::debugQuery(const QSqlQuery& query)
         instance().closeConnection();
         break;
     }
+}
+
+void DatabaseManager::debugError(const QSqlError &error)
+{
+    qWarning() << "Query KO:" << error.text();
+    instance().closeConnection();
 }
 
 DatabaseManager&DatabaseManager::instance()
@@ -53,6 +57,7 @@ void DatabaseManager::connectToDatabase(const QString &host, const QString &user
     bDatabase->setPort(port);
     if(!bDatabase->open(user,password)){
         closeConnection();
+        return;
     }
     emit connectionChanged(true);
 }

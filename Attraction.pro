@@ -8,3 +8,4 @@ SUBDIRS += \
 
 AccessController.depends = Core
 Client.depends = Core
+SalesService.depends = Core

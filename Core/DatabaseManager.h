@@ -7,10 +7,11 @@
 #include "core_global.h"
 
 #include <QObject>
+#include <QSqlError>
+#include <QSqlQuery>
 
 class QSqlQuery;
 class QSqlDatabase;
-class QSqlError;
 
 const QString DATABASE = "Attraction";
 const QString HOST = "localhost";
@@ -25,6 +26,7 @@ class CORESHARED_EXPORT DatabaseManager : public QObject
 
 public:
     static void debugQuery(const QSqlQuery& query);
+    static void debugError(const QSqlError &error);
 
     static DatabaseManager& instance();
     ~DatabaseManager();

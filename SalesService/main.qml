@@ -40,6 +40,7 @@ ApplicationWindow {
         currentIndex: tabBar.currentIndex
 
         Page {
+
         }
 
         Page{

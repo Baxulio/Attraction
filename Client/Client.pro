@@ -26,45 +26,50 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         MainWindow.cpp \
-    SubscriptionDelegate.cpp \
-    SettingsDialog.cpp \
-    ProxyModel.cpp \
-    WieagandReaderDialog.cpp \
-    PriceRules.cpp \
-    OperationsWithBracer.cpp \
-    Monitoring.cpp \
-    HistoryForm.cpp \
-    RegisterForm.cpp \
-    UniteForm.cpp \
-    StatusForm.cpp \
-    TransactionItem.cpp
+    delegates/SlidingStackedWidget.cpp \
+    dialogs/SettingsDialog.cpp \
+    dialogs/WieagandReaderDialog.cpp \
+    forms/HistoryForm.cpp \
+    forms/ProductsForm.cpp \
+    forms/RegisterForm.cpp \
+    forms/StatusForm.cpp \
+    forms/UniteForm.cpp \
+    forms/DashboardForm.cpp\
+    models/ProxyModel.cpp \
+    forms/AdditionalSettingsForm.cpp \
+    delegates/TransactionsFrame.cpp \
+    models/DashboardProxyModel.cpp \
+    models/CustomSqlTableModel.cpp
 
 HEADERS += \
         MainWindow.h \
-    SubscriptionDelegate.h \
-    SettingsDialog.h \
-    ProxyModel.h \
-    WieagandReaderDialog.h \
-    PriceRules.h \
-    OperationsWithBracer.h \
-    Monitoring.h \
-    HistoryForm.h \
-    RegisterForm.h \
-    UniteForm.h \
-    StatusForm.h \
-    TransactionItem.h
+    delegates/SlidingStackedWidget.h \
+    dialogs/SettingsDialog.h \
+    dialogs/WieagandReaderDialog.h \
+    forms/HistoryForm.h \
+    forms/ProductsForm.h \
+    forms/RegisterForm.h \
+    forms/StatusForm.h \
+    forms/UniteForm.h \
+    forms/DashboardForm.h \
+    forms/AdditionalSettingsForm.h\
+    models/ProxyModel.h \
+    delegates/TransactionsFrame.h \
+    models/DashboardProxyModel.h \
+    models/CustomSqlTableModel.h
 
 FORMS += \
         MainWindow.ui \
-    SettingsDialog.ui \
-    WieagandReaderDialog.ui \
-    PriceRules.ui \
-    Monitoring.ui \
-    HistoryForm.ui \
-    RegisterForm.ui \
-    UniteForm.ui \
-    StatusForm.ui \
-    TransactionItem.ui
+    dialogs/SettingsDialog.ui \
+    dialogs/WieagandReaderDialog.ui \
+    forms/HistoryForm.ui \
+    forms/ProductsForm.ui \
+    forms/RegisterForm.ui \
+    forms/StatusForm.ui \
+    forms/UniteForm.ui \
+    forms/DashboardForm.ui \
+    forms/AdditionalSettingsForm.ui \
+    delegates/TransactionsFrame.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore

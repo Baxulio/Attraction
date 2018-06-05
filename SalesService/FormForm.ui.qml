@@ -6,46 +6,52 @@ Item {
     width: 400
     height: 400
 
-    ColumnLayout {
-        id: columnLayout
-        anchors.fill: parent
+    ListView {
+        id: listView
+        x: 193
+        y: 63
+        width: 110
+        height: 160
+        model: ListModel {
+            ListElement {
+                name: "Grey"
+                colorCode: "grey"
+            }
 
-        Image {
-            id: image
-            width: 100
-            height: 100
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            anchors.horizontalCenter: parent.horizontalCenter
-            fillMode: Image.PreserveAspectFit
-            source: "qrc:/qtquickplugin/images/template_image.png"
+            ListElement {
+                name: "Red"
+                colorCode: "red"
+            }
+
+            ListElement {
+                name: "Blue"
+                colorCode: "blue"
+            }
+
+            ListElement {
+                name: "Green"
+                colorCode: "green"
+            }
         }
+        delegate: Item {
+            x: 5
+            width: 80
+            height: 40
+            Row {
+                id: row1
+                Rectangle {
+                    width: 40
+                    height: 40
+                    color: colorCode
+                }
 
-        Text {
-            id: text2
-            text: qsTr("Text")
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            font.pixelSize: 12
+                Text {
+                    text: name
+                    font.bold: true
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                spacing: 10
+            }
         }
-
-        Text {
-            id: text3
-            color: "#4c4c4c"
-            text: qsTr("Text")
-            Layout.fillHeight: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            font.pixelSize: 12
-            horizontalAlignment: Text.AlignHCenter
-            Layout.fillWidth: true
-            wrapMode: Text.WordWrap
-        }
-
-
-
     }
 }
