@@ -40,7 +40,6 @@ ApplicationWindow {
         currentIndex: tabBar.currentIndex
 
         Page {
-
         }
 
         Page{
@@ -49,7 +48,6 @@ ApplicationWindow {
                 initialItem: ProductTypesPage {}
                 anchors.fill: parent
             }
-
         }
 
         Page {

@@ -29,13 +29,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stack_widget_layout->insertWidget(0,bStackedWidget,1);
     bStackedWidget->setSpeed(370);
     connect(bStackedWidget, &SlidingStackedWidget::currentChanged, [this](int n){
-        if(dynamic_cast<RegisterForm*>(bStackedWidget->widget(n)))ui->register_button->setChecked(true);
-        else if(dynamic_cast<UniteForm*>(bStackedWidget->widget(n)))ui->unite_button->setChecked(true);
-        else if(dynamic_cast<StatusForm*>(bStackedWidget->widget(n)))ui->status_button->setChecked(true);
-        else if(dynamic_cast<ProductsForm*>(bStackedWidget->widget(n)))ui->products_button->setChecked(true);
-        else if(dynamic_cast<DashboardForm*>(bStackedWidget->widget(n)))ui->dashboard_but->setChecked(true);
-        else if(dynamic_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n)))ui->additional_settings_button->setChecked(true);
-        else if(dynamic_cast<HistoryForm*>(bStackedWidget->widget(n)))ui->history_button->setChecked(true);
+             if(qobject_cast<RegisterForm*>(bStackedWidget->widget(n)))ui->register_button->setChecked(true);
+        else if(qobject_cast<UniteForm*>(bStackedWidget->widget(n)))ui->unite_button->setChecked(true);
+        else if(qobject_cast<StatusForm*>(bStackedWidget->widget(n)))ui->status_button->setChecked(true);
+        else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n)))ui->products_button->setChecked(true);
+        else if(qobject_cast<DashboardForm*>(bStackedWidget->widget(n)))ui->dashboard_but->setChecked(true);
+        else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n)))ui->additional_settings_button->setChecked(true);
+        else if(qobject_cast<HistoryForm*>(bStackedWidget->widget(n)))ui->history_button->setChecked(true);
     });
 
     connect(this, &MainWindow::showStatusMessage, [this](const QString &msg){
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&bDb,&DatabaseManager::connectionChanged, [this](bool status){
         if(status){
             emit showStatusMessage("<font color='green'>Successfully connected!");
-            emit ui->autoUpdate_button->clicked(false);
+            emit ui->autoUpdate_button->clicked();
         }
         else emit showStatusMessage(QString("<font color='red'>%1 </font><font color='grey'>Disconnected!").arg(bDb.lastError().databaseText()));
 
@@ -88,6 +88,7 @@ void MainWindow::initActionsConnections()
     autoUpdate_menu->addAction(ui->action_autorefresh_20_sec);
     autoUpdate_menu->addAction(ui->action_autorefresh_35_sec);
     autoUpdate_menu->addAction(ui->action_autorefresh_1_min);
+
     connect(ui->action_autorefresh_1_sec, &QAction::triggered, [this](){
         ui->autoUpdate_button->setText(ui->action_autorefresh_1_sec->text());
         timer.start(1000);
@@ -122,6 +123,7 @@ void MainWindow::initActionsConnections()
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     connect(ui->configureButton, &QPushButton::clicked, bSettings, &SettingsDialog::show);
+
     connect(ui->aboutButton, &QPushButton::clicked, [this](){
         QMessageBox::about(this, tr("About Attraction"),
                            tr("The <b>Attraction</b> is an Access Controll System for amusement parks "
@@ -136,6 +138,8 @@ void MainWindow::initActionsConnections()
                               "<p align='right'>Author: <b>Nurnazarov Bakhmanyor Yunuszoda</b></p> <a align='right' href="
                               "'http://bahman.byethost18.com'>[bahman.byethost18.com]</a>"));
     });
+
+
     connect(ui->connectButton,&QPushButton::clicked, [this](){
         bDb.connectToDatabase(bSettings->serverSettings().host,
                               bSettings->serverSettings().user,
@@ -149,7 +153,7 @@ void MainWindow::initActionsConnections()
     connect(ui->register_button, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<RegisterForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<RegisterForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
@@ -164,7 +168,7 @@ void MainWindow::initActionsConnections()
     connect(ui->unite_button, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<UniteForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<UniteForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
@@ -179,7 +183,7 @@ void MainWindow::initActionsConnections()
     connect(ui->status_button, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<StatusForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<StatusForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
@@ -194,7 +198,7 @@ void MainWindow::initActionsConnections()
     connect(ui->products_button, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<ProductsForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<ProductsForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
@@ -209,7 +213,7 @@ void MainWindow::initActionsConnections()
     connect(ui->dashboard_but, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<DashboardForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<DashboardForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
@@ -224,7 +228,7 @@ void MainWindow::initActionsConnections()
     connect(ui->additional_settings_button, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<AdditionalSettingsForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
@@ -239,7 +243,7 @@ void MainWindow::initActionsConnections()
     connect(ui->history_button, &QPushButton::toggled, [this](bool checked){
         if(!checked)return;
         for (int i = 0; i < bStackedWidget->count(); i++) {
-            if(dynamic_cast<HistoryForm*>(bStackedWidget->widget(i))){
+            if(qobject_cast<HistoryForm*>(bStackedWidget->widget(i))){
                 bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
                 return;
             }
