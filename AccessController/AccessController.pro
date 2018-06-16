@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui printsupport
+QT       += core gui sql printsupport
 CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -25,15 +25,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        MainWindow.cpp
+        MainWindow.cpp \
+    dialogs/SettingsDialog.cpp \
+    delegates/ProductTypesDelegate.cpp
 
 HEADERS += \
-        MainWindow.h
+        MainWindow.h \
+    dialogs/SettingsDialog.h \
+    delegates/ProductTypesDelegate.h
 
 FORMS += \
-        MainWindow.ui
+        MainWindow.ui \
+    dialogs/SettingsDialog.ui \
+    delegates/ProductTypesDelegate.ui
 
-#LIBS += -lwiringPi -lpthread
+LIBS += -lwiringPi -lpthread
 #unix:!macx: LIBS += -lpigpio   USE THIS IF YOU WORK WITH PIGPIO
 
 unix:!macx: LIBS += -L$$OUT_PWD/../Core/ -lCore
@@ -45,4 +51,7 @@ DEPENDPATH += $$PWD/../Core
 #qnx: target.path = /tmp/$${TARGET}/bin
 #else: unix:!android: target.path = /home/pi/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    accesscontrollerresources.qrc
 

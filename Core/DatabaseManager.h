@@ -10,7 +10,6 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-class QSqlQuery;
 class QSqlDatabase;
 
 const QString DATABASE = "Attraction";
