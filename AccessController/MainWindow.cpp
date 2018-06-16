@@ -15,14 +15,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(&bTimer, &QTimer::timeout, [this]{
-
+        interrupt();
     });
     readSettings();
     initActionsConnections();
 
     connect(&bDb,&DatabaseManager::connectionChanged, [this](bool status){
         if(status){
-            ui->statusBar->showMessage("<font color='green'>Successfully connected!");
+            ui->statusBar->showMessage("Successfully connected!");
         }
         else exit(EXIT_FAILURE);
     });

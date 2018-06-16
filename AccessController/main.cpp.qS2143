@@ -4,6 +4,7 @@
 ///////////////////////// WIEGAND
 #include <signal.h>
 #include <sys/time.h>
+#include <QDebug>
 
 MainWindow *w;
 
@@ -167,6 +168,7 @@ void d1_pulse() {
 }
 
 void interrupt(void){
+    qDebug()<<"it works!";
     w->interrupt();
 }
 

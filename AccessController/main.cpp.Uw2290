@@ -4,6 +4,7 @@
 ///////////////////////// WIEGAND
 #include <signal.h>
 #include <sys/time.h>
+#include <QDebug>
 
 MainWindow *w;
 
@@ -167,6 +168,7 @@ void d1_pulse() {
 }
 
 void interrupt(void){
+    qDebug()<<"it works";
     w->interrupt();
 }
 
@@ -185,7 +187,7 @@ bool gpio_init() {
     pinMode(options.d0pin, INPUT);
     pinMode(options.d1pin, INPUT);
 
-    pullUpDnControl(BREAK_PIN, PUD_UP);
+    pullUpDnControl(BREAK_PIN, PUD_OFF);
 
     pullUpDnControl(options.d0pin, PUD_OFF);
     pullUpDnControl(options.d1pin, PUD_OFF);
