@@ -39,7 +39,9 @@ SOURCES += \
     forms/AdditionalSettingsForm.cpp \
     delegates/TransactionsFrame.cpp \
     models/DashboardProxyModel.cpp \
-    models/CustomSqlTableModel.cpp
+    models/CustomSqlTableModel.cpp \
+    forms/SalesForm.cpp \
+    models/SalesModel.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -56,7 +58,9 @@ HEADERS += \
     models/ProxyModel.h \
     delegates/TransactionsFrame.h \
     models/DashboardProxyModel.h \
-    models/CustomSqlTableModel.h
+    models/CustomSqlTableModel.h \
+    forms/SalesForm.h \
+    models/SalesModel.h
 
 FORMS += \
         MainWindow.ui \
@@ -69,7 +73,8 @@ FORMS += \
     forms/UniteForm.ui \
     forms/DashboardForm.ui \
     forms/AdditionalSettingsForm.ui \
-    delegates/TransactionsFrame.ui
+    delegates/TransactionsFrame.ui \
+    forms/SalesForm.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore

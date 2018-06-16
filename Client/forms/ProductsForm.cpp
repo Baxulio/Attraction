@@ -19,7 +19,6 @@ ProductsForm::ProductsForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    product_types_model->setTable("product_types");
     product_types_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     ui->product_types_table->setModel(product_types_model);
 
@@ -59,6 +58,7 @@ ProductsForm::~ProductsForm()
 
 void ProductsForm::on_refresh()
 {
+    product_types_model->setTable("product_types");
     if(!product_types_model->select()){
         bDb.debugError(product_types_model->lastError());
         return ;
@@ -119,6 +119,7 @@ void ProductsForm::on_change_product_type_icon_but_clicked()
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open Icon"), QDir::currentPath(), tr("Image Files (*.png)"));
     QImage image(fileName,"PNG");
+    image = image.scaledToWidth(64,Qt::SmoothTransformation);
     QByteArray byteArray;
     QBuffer buffer(&byteArray);
     buffer.open(QIODevice::WriteOnly);
@@ -146,6 +147,7 @@ void ProductsForm::on_change_product_icon_but_clicked()
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open Icon"), QDir::currentPath(), tr("Image Files (*.png)"));
     QImage image(fileName,"PNG");
+    image = image.scaledToWidth(128,Qt::SmoothTransformation);
     QByteArray byteArray;
     QBuffer buffer(&byteArray);
     buffer.open(QIODevice::WriteOnly);

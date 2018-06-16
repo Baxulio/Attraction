@@ -9,7 +9,6 @@ AdditionalSettingsForm::AdditionalSettingsForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    tariffs_model->setTable("tariff");
     tariffs_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     ui->tariffs_table->setModel(tariffs_model);
 
@@ -24,6 +23,7 @@ AdditionalSettingsForm::~AdditionalSettingsForm()
 
 void AdditionalSettingsForm::on_refresh()
 {
+    tariffs_model->setTable("tariff");
     if(!tariffs_model->select()){
         bDb.debugError(tariffs_model->lastError());
         return ;

@@ -37,7 +37,7 @@
      <item>
       <widget class="QPushButton" name="back_but">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
@@ -46,7 +46,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../clientresources.qrc">
          <normaloff>:/resources/glyphs/15.png</normaloff>:/resources/glyphs/15.png</iconset>
        </property>
        <property name="flat">
@@ -131,7 +131,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>:/resources/glyphs/14.png</pixmap>
+             <pixmap resource="../clientresources.qrc">:/resources/glyphs/14.png</pixmap>
             </property>
            </widget>
           </item>
@@ -184,7 +184,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>:/resources/glyphs/coins.png</pixmap>
+             <pixmap resource="../clientresources.qrc">:/resources/glyphs/coins.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -280,7 +280,7 @@ QPushButton:hover{
            <string>CSV</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../clientresources.qrc">
             <normaloff>:/resources/glyphs/24.png</normaloff>:/resources/glyphs/24.png</iconset>
           </property>
          </widget>
@@ -349,7 +349,7 @@ QPushButton:hover{
           </font>
          </property>
          <property name="pixmap">
-          <pixmap>:/resources/glyphs/73.png</pixmap>
+          <pixmap resource="../clientresources.qrc">:/resources/glyphs/73.png</pixmap>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -927,7 +927,7 @@ QPushButton:hover{
                 <string>Очисить</string>
                </property>
                <property name="icon">
-                <iconset>
+                <iconset resource="../clientresources.qrc">
                  <normaloff>:/resources/glyphs/51.png</normaloff>:/resources/glyphs/51.png</iconset>
                </property>
               </widget>
@@ -1031,6 +1031,8 @@ QAbstractButton:hover{
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../clientresources.qrc"/>
+ </resources>
  <connections/>
 </ui>

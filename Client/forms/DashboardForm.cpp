@@ -16,15 +16,14 @@ DashboardForm::DashboardForm(QWidget *parent) :
     ui->transactions_frame->layout()->addWidget(transactions);
 
     ui->tariff_combo->setModel(tariffModel);
-    tariffModel->setTable("tariff");
 
-    activeModel->setTable("active_bracers");
     activeModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     proxyModel->setSourceModel(activeModel);
     ui->model_table->setModel(proxyModel);
 
     connect(&bDb, &DatabaseManager::refresh, this, &DashboardForm::on_refresh);
     connect(ui->model_table->selectionModel(), &QItemSelectionModel::currentRowChanged, [this](QModelIndex cur, QModelIndex prev){
+        Q_UNUSED(prev)
         QSqlQuery query;
         if(!query.exec(QString("SELECT active_bracers.id, active_bracers.code, active_bracers.bracer_number, active_bracers.enter_time, active_bracers.enter_number, active_bracers.deposit_id, deposit.cash,tariff.title "
                                "FROM ((active_bracers "
@@ -47,12 +46,14 @@ DashboardForm::~DashboardForm()
 
 void DashboardForm::on_refresh()
 {
+    tariffModel->setTable("tariff");
     if(!tariffModel->select()){
         bDb.debugError(tariffModel->lastError());
         return ;
     }
     ui->tariff_combo->setModelColumn(1);
 
+    activeModel->setTable("active_bracers");
     if(!activeModel->select()){
         bDb.debugError(activeModel->lastError());
         return ;

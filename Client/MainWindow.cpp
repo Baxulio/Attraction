@@ -17,6 +17,7 @@
 #include "forms/HistoryForm.h"
 #include "forms/DashboardForm.h"
 #include "forms/AdditionalSettingsForm.h"
+#include "forms/SalesForm.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,13 +30,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stack_widget_layout->insertWidget(0,bStackedWidget,1);
     bStackedWidget->setSpeed(370);
     connect(bStackedWidget, &SlidingStackedWidget::currentChanged, [this](int n){
-             if(qobject_cast<RegisterForm*>(bStackedWidget->widget(n)))ui->register_button->setChecked(true);
+        if(qobject_cast<RegisterForm*>(bStackedWidget->widget(n)))ui->register_button->setChecked(true);
         else if(qobject_cast<UniteForm*>(bStackedWidget->widget(n)))ui->unite_button->setChecked(true);
         else if(qobject_cast<StatusForm*>(bStackedWidget->widget(n)))ui->status_button->setChecked(true);
         else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n)))ui->products_button->setChecked(true);
         else if(qobject_cast<DashboardForm*>(bStackedWidget->widget(n)))ui->dashboard_but->setChecked(true);
         else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n)))ui->additional_settings_button->setChecked(true);
         else if(qobject_cast<HistoryForm*>(bStackedWidget->widget(n)))ui->history_button->setChecked(true);
+        else if(qobject_cast<SalesForm*>(bStackedWidget->widget(n)))ui->sales_button->setChecked(true);
     });
 
     connect(this, &MainWindow::showStatusMessage, [this](const QString &msg){
@@ -60,7 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     ui->connectButton->clicked();
-    emit ui->dashboard_but->toggled(true);
 }
 
 MainWindow::~MainWindow()
@@ -161,6 +162,7 @@ void MainWindow::initActionsConnections()
         RegisterForm *registerForm = new RegisterForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(registerForm));
         connect(registerForm, &RegisterForm::back, [this, registerForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(registerForm);
             registerForm->deleteLater();
         });
@@ -176,6 +178,7 @@ void MainWindow::initActionsConnections()
         UniteForm *uniteForm = new UniteForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(uniteForm));
         connect(uniteForm, &UniteForm::back, [this, uniteForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(uniteForm);
             uniteForm->deleteLater();
         });
@@ -191,6 +194,7 @@ void MainWindow::initActionsConnections()
         StatusForm *statusForm = new StatusForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(statusForm));
         connect(statusForm, &StatusForm::back, [this, statusForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(statusForm);
             statusForm->deleteLater();
         });
@@ -206,6 +210,7 @@ void MainWindow::initActionsConnections()
         ProductsForm *productsForm = new ProductsForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(productsForm));
         connect(productsForm, &ProductsForm::back, [this, productsForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(productsForm);
             productsForm->deleteLater();
         });
@@ -221,6 +226,7 @@ void MainWindow::initActionsConnections()
         DashboardForm *dashboardForm = new DashboardForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(dashboardForm));
         connect(dashboardForm, &DashboardForm::back, [this, dashboardForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(dashboardForm);
             dashboardForm->deleteLater();
         });
@@ -236,6 +242,7 @@ void MainWindow::initActionsConnections()
         AdditionalSettingsForm *additionalSettingsForm = new AdditionalSettingsForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(additionalSettingsForm));
         connect(additionalSettingsForm, &AdditionalSettingsForm::back, [this, additionalSettingsForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(additionalSettingsForm);
             additionalSettingsForm->deleteLater();
         });
@@ -251,8 +258,25 @@ void MainWindow::initActionsConnections()
         HistoryForm *historyForm = new HistoryForm(this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(historyForm));
         connect(historyForm, &HistoryForm::back, [this, historyForm](){
+            if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(historyForm);
             historyForm->deleteLater();
+        });
+    });
+    connect(ui->sales_button, &QPushButton::toggled, [this](bool checked){
+        if(!checked)return;
+        for (int i = 0; i < bStackedWidget->count(); i++) {
+            if(qobject_cast<SalesForm*>(bStackedWidget->widget(i))){
+                bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
+                return;
+            }
+        }
+        SalesForm *salesForm = new SalesForm(this);
+        bStackedWidget->slideInIdx(bStackedWidget->addWidget(salesForm));
+        connect(salesForm, &SalesForm::back, [this, salesForm](){
+            if(bStackedWidget->count()<2)return;
+            bStackedWidget->removeWidget(salesForm);
+            salesForm->deleteLater();
         });
     });
 }

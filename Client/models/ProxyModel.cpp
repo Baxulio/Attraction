@@ -52,7 +52,7 @@ bool ProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_pare
 
 bool ProxyModel::filterAcceptsColumn(int source_column, const QModelIndex &source_parent) const
 {
-
+    Q_UNUSED(source_parent)
     QString fieldString = sourceModel()->headerData(source_column,Qt::Horizontal,Qt::DisplayRole).toString();
     if(fieldString=="id" or fieldString=="code" or fieldString=="deposit_id" or fieldString=="tariff_id" or fieldString=="cash")
         return false;

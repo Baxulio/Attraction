@@ -86,5 +86,7 @@
         <file>resources/glyphs/coins.png</file>
         <file>resources/glyphs/info.png</file>
         <file>resources/logo.png</file>
+        <file>resources/cart.png</file>
+        <file>resources/store.png</file>
     </qresource>
 </RCC>
