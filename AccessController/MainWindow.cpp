@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QMessageBox>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -138,7 +139,7 @@ void MainWindow::writeSettings()
 bool MainWindow::enter(quint32 code)
 {
     QSqlQuery query;
-    if(!query.exec(QString("SELECT id, enter_time FROM active_bracers WHERE code=%1").arg(code))){
+    if(!query.exec(QString("SELECT id, enter_time, tariff_id FROM active_bracers WHERE code=%1").arg(code))){
         bDb.debugQuery(query);
         return false;
     }
@@ -155,9 +156,12 @@ bool MainWindow::enter(quint32 code)
     }
 
     if(!query.exec(QString("UPDATE active_bracers "
-                           "SET enter_time=SYSDATE(), enter_number=%1 "
-                           "WHERE id=%2")
+                           "SET enter_time=SYSDATE(), "
+                           "enter_number=%1, "
+                           "expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=%2) MINUTE "
+                           "WHERE id=%3")
                    .arg(bSettings->modeSettings().bareerNumber)
+                   .arg(query.value("tariff_id").toInt())
                    .arg(query.value("id").toInt()))){
         bDb.debugQuery(query);
         return false;
@@ -169,7 +173,7 @@ bool MainWindow::enter(quint32 code)
 bool MainWindow::exit(quint32 code)
 {
     QSqlQuery query;
-    if(!query.exec(QString("SELECT *, SYSDATE() as curDateTime "
+    if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
                            "FROM ((active_bracers "
                            "INNER JOIN deposit ON deposit.id=deposit_id) "
                            "INNER JOIN tariff ON tariff.id=tariff_id) "
@@ -177,20 +181,64 @@ bool MainWindow::exit(quint32 code)
         bDb.debugQuery(query);
         return false;
     }
+
     query.next();
+
     if(!query.isValid()){
         ui->statusBar->showMessage("Карта не зарегистрирована!",2000);
         return false;
     }
-    QDateTime timeLimit = query.value("time_limit").toDateTime();
-    QDateTime enterTime = query.value("enter_time").toDateTime();
-    if(tim>){
 
+    QDateTime enterTime = query.value("enter_time").toDateTime();
+
+    quint64 timeLimit= enterTime.secsTo(query.value("expected_exit_time").toDateTime())/60;
+    quint64 elapsed = enterTime.secsTo(query.value("cur_date_time").toDateTime())/60;
+
+    if(elapsed>timeLimit){
+        //here goes penalty
+        double cache = query.value("cash").toDouble();
+
+        int minutes = int(elapsed%60==0?elapsed/60:1+elapsed/60)*60;
+
+        cache-=minutes*(query.value("price").toDouble()/timeLimit);
+
+        if(!query.exec(QString("CALL penalty(%1,%2,%3,%4);")
+                       .arg(minutes)
+                       .arg(query.value("id").toInt())
+                       .arg(cache)
+                       .arg(query.value("deposit_id").toInt()))){
+            bDb.debugQuery(query);
+            return false;
+        }
+        if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
+                               "FROM ((active_bracers "
+                               "INNER JOIN deposit ON deposit.id=deposit_id) "
+                               "INNER JOIN tariff ON tariff.id=tariff_id) "
+                               "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
+            bDb.debugQuery(query);
+            return false;
+        }
     }
+
     double cache = query.value("cash").toDouble();
 
-
-
+    if(cache==0){
+        //print();
+        if(!query.exec(QString("CALL move_to_history(%1,%2)").arg(bSettings->modeSettings().bareerNumber)
+                       .arg(query.value("id")))){
+            bDb.debugQuery(query);
+            return false;
+        }
+        return true;
+    }
+    else if(cache<0){
+        //print();
+        return false;
+    }
+    else {
+        //print();
+        return false;
+    }
 }
 
 void MainWindow::interrupt()
