@@ -166,8 +166,25 @@ bool MainWindow::enter(quint32 code)
     return true;
 }
 
-bool MainWindow::exit(quint32 core)
+bool MainWindow::exit(quint32 code)
 {
+    QSqlQuery query;
+    if(!query.exec(QString("SELECT * "
+                           "FROM ((active_bracers "
+                           "INNER JOIN deposit ON deposit.id=deposit_id) "
+                           "INNER JOIN tariff ON tariff.id=tariff_id) "
+                           "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
+        bDb.debugQuery(query);
+        return false;
+    }
+    query.next();
+    if(!query.isValid()){
+        ui->statusBar->showMessage("Карта не зарегистрирована!",2000);
+        return false;
+    }
+    double cache = query.value("cash").toDouble();
+
+
 
 }
 

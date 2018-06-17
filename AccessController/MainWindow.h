@@ -40,7 +40,7 @@ private:
     void writeSettings();
 
     bool enter(quint32 code);
-    bool exit(quint32 core);
+    bool exit(quint32 code);
 
 public slots:
     void interrupt();

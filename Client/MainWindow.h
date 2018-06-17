@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <DatabaseManager.h>
 #include <QTimer>
+
 namespace Ui {
 class MainWindow;
 }
