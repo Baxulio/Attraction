@@ -169,7 +169,7 @@ bool MainWindow::enter(quint32 code)
 bool MainWindow::exit(quint32 code)
 {
     QSqlQuery query;
-    if(!query.exec(QString("SELECT * "
+    if(!query.exec(QString("SELECT *, SYSDATE() as curDateTime "
                            "FROM ((active_bracers "
                            "INNER JOIN deposit ON deposit.id=deposit_id) "
                            "INNER JOIN tariff ON tariff.id=tariff_id) "
@@ -181,6 +181,11 @@ bool MainWindow::exit(quint32 code)
     if(!query.isValid()){
         ui->statusBar->showMessage("Карта не зарегистрирована!",2000);
         return false;
+    }
+    QDateTime timeLimit = query.value("time_limit").toDateTime();
+    QDateTime enterTime = query.value("enter_time").toDateTime();
+    if(tim>){
+
     }
     double cache = query.value("cash").toDouble();
 
