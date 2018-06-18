@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <DatabaseManager.h>
+#include <QSqlRecord>
 
 #include "dialogs/SettingsDialog.h"
 #include "Core.h"
@@ -42,6 +43,7 @@ private:
     bool enter(quint32 code);
     bool exit(quint32 code);
 
+    void print(const QString &title, const QSqlRecord &record);
 public slots:
     void interrupt();
 };

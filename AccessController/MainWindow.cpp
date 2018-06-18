@@ -223,22 +223,49 @@ bool MainWindow::exit(quint32 code)
     double cache = query.value("cash").toDouble();
 
     if(cache==0){
-        //print();
-        if(!query.exec(QString("CALL move_to_history(%1,%2)").arg(bSettings->modeSettings().bareerNumber)
-                       .arg(query.value("id")))){
+        print("",query.record());
+        if(!query.exec(QString("CALL move_to_history(%1,%2)")
+                       .arg(bSettings->modeSettings().bareerNumber)
+                       .arg(query.value("id").toInt()))){
             bDb.debugQuery(query);
             return false;
         }
         return true;
     }
     else if(cache<0){
-        //print();
+        print("Долг",query.record());
         return false;
     }
     else {
-        //print();
+        print("Остаток",query.record());
         return false;
     }
+}
+
+void MainWindow::print(const QString &title, const QSqlRecord &record)
+{
+    char t[1000];
+    sprintf(t,"printf '********************************\n"
+              "OASIS\n\n"
+              "Braslet: %d\n"
+              "Vxod: %s    [%02d]\n"
+              "Vixod: %s   [%02d]\n"
+              "Tarif: %s\n"
+              "Balans: .2f\n"
+              "Transaktsii:\n"
+              "-------------------\n"
+              ""
+              "-------------------\n"
+              "********** powered by GSS.UZ\n\n\n\n' >/dev/usb/lp0",
+            record.value("bracer_number").toUInt(),
+            record.value("enter_time").toDateTime().toString("dd.MM.yyyy H:mm").toLatin1().data(),
+            record.value("enter_number").toInt(),
+            record.value("cur_date_time").toDateTime().toString("dd.MM.yyyy H:mm").toLatin1().data(),
+            bSettings->modeSettings().bareerNumber,
+            record.value("title").toString(),
+            record.value("cash").toDouble()
+            );
+    system(t);
 }
 
 void MainWindow::interrupt()
