@@ -24,13 +24,21 @@ private slots:
 
     void on_products_listView_doubleClicked(const QModelIndex &index);
 
+    void on_lineEdit_returnPressed();
+
+    void on_clear_but_clicked();
+
+    void on_search_but_clicked();
+
+    void on_make_order_but_clicked();
+
 private:
     Ui::SalesForm *ui;
     DatabaseManager &bDb;
 
     SalesModel typesModel, productsModel;
     QSortFilterProxyModel productsProxyModel;
-
+    CartProxyModel cartProxyModel;
 signals:
     void back();
 };

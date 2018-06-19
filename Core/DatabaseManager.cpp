@@ -2,6 +2,7 @@
 
 #include <QSqlDatabase>
 #include <QDebug>
+#include <QSqlDriver>
 
 void DatabaseManager::debugQuery(const QSqlQuery& query)
 {
