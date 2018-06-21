@@ -16,14 +16,13 @@ SalesForm::SalesForm(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    typesModel.setEditStrategy(SalesModel::OnManualSubmit);
-    ui->types_listView->setModel(&typesModel);
+    typesModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
+    productTypesProxyModel.setSourceModel(&typesModel);
+    ui->types_listView->setModel(&productTypesProxyModel);
 
-    productsModel.setEditStrategy(SalesModel::OnManualSubmit);
+    productsModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
     productsProxyModel.setSourceModel(&productsModel);
-
     ui->products_listView->setModel(&productsProxyModel);
-    ui->products_listView->setContextMenuPolicy(Qt::ActionsContextMenu);
     ui->products_listView->addAction(ui->add_action);
     ui->products_listView->addAction(ui->remove_action);
 
@@ -31,6 +30,7 @@ SalesForm::SalesForm(QWidget *parent) :
     ui->cart_table->setModel(&cartProxyModel);
 
     connect(&bDb, &DatabaseManager::refresh, this, &SalesForm::on_refresh);
+
     connect(ui->types_listView->selectionModel(), &QItemSelectionModel::currentRowChanged, [this](QModelIndex cur, QModelIndex prev){
         Q_UNUSED(prev)
         QSqlRecord rec = typesModel.record(cur.row());
@@ -48,6 +48,7 @@ SalesForm::SalesForm(QWidget *parent) :
         ui->total_price_label->setText(QString::number(total_price+productsModel.data(productsModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
 
         cartProxyModel.invalidate();
+        ui->cart_table->reset();
     });
 
     connect(ui->remove_action, &QAction::triggered, [this]{
@@ -69,7 +70,9 @@ SalesForm::SalesForm(QWidget *parent) :
             on_clear_but_clicked();
         }
         cartProxyModel.invalidate();
+        ui->cart_table->reset();
     });
+
     on_refresh();
 }
 
@@ -95,6 +98,12 @@ void SalesForm::on_refresh()
     }
     ui->products_listView->setModelColumn(productsModel.fieldIndex("title"));
     productsProxyModel.setFilterKeyColumn(productsModel.fieldIndex("product_types_id"));
+
+    ui->cart_table->hideColumn(productsModel.fieldIndex("id"));
+    ui->cart_table->hideColumn(productsModel.fieldIndex("product_types_id"));
+    ui->cart_table->hideColumn(productsModel.fieldIndex("icon"));
+    ui->cart_table->hideColumn(productsModel.fieldIndex("comment"));
+    ui->cart_table->hideColumn(productsModel.fieldIndex("amount"));
 }
 
 void SalesForm::on_back_but_clicked()
@@ -104,6 +113,7 @@ void SalesForm::on_back_but_clicked()
 
 void SalesForm::on_products_listView_doubleClicked(const QModelIndex &index)
 {
+    Q_UNUSED(index)
     ui->add_action->trigger();
 }
 
@@ -165,9 +175,9 @@ void SalesForm::on_make_order_but_clicked()
     double total=0;
     QString queryString = "INSERT INTO active_transactions (product_id, total_price, time, active_bracers_id) VALUES";
     for(int i=0; i<n; i++){
-        double total_price = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("amount"))).toInt()
-                *cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("price"))).toDouble();
-        QString product_id = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("id"))).toString();
+        double total_price = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("amount")),Qt::EditRole).toInt()
+                *cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("price")),Qt::EditRole).toDouble();
+        QString product_id = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("id")),Qt::EditRole).toString();
         queryString.append(QString(" (%1,%2,SYSDATE(),%3),").arg(product_id).arg(total_price).arg(query.value("id").toString()));
         total+=total_price;
     }

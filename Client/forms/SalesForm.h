@@ -3,8 +3,11 @@
 
 #include <QWidget>
 #include "DatabaseManager.h"
-#include "models/SalesModel.h"
-#include <QSortFilterProxyModel>
+#include <QSqlTableModel>
+
+#include "models/ProductsProxyModel.h"
+#include "models/ProductTypesProxyModel.h"
+#include "models/CartProxyModel.h"
 
 namespace Ui {
 class SalesForm;
@@ -36,8 +39,10 @@ private:
     Ui::SalesForm *ui;
     DatabaseManager &bDb;
 
-    SalesModel typesModel, productsModel;
-    QSortFilterProxyModel productsProxyModel;
+    QSqlTableModel typesModel, productsModel;
+
+    ProductTypesProxyModel productTypesProxyModel;
+    ProductsProxyModel productsProxyModel;
     CartProxyModel cartProxyModel;
 signals:
     void back();
