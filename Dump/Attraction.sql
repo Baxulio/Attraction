@@ -31,13 +31,14 @@ CREATE TABLE IF NOT EXISTS `active_bracers` (
   KEY `FK_active_bracers_tariff` (`tariff_id`),
   CONSTRAINT `FK_active_bracers_deposit` FOREIGN KEY (`deposit_id`) REFERENCES `deposit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_active_bracers_tariff` FOREIGN KEY (`tariff_id`) REFERENCES `tariff` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.active_bracers: ~1 rows (approximately)
+-- Dumping data for table attraction.active_bracers: ~2 rows (approximately)
 DELETE FROM `active_bracers`;
 /*!40000 ALTER TABLE `active_bracers` DISABLE KEYS */;
 INSERT INTO `active_bracers` (`id`, `code`, `bracer_number`, `enter_time`, `enter_number`, `deposit_id`, `tariff_id`, `expected_exit_time`) VALUES
-	(49, 3173345, 2, '2018-06-18 18:19:40', 1, 76, 1, '2018-06-18 20:19:40');
+	(52, 3173345, 4, NULL, 1, 79, 1, NULL),
+	(53, 8610967, 5, NULL, 1, 80, 1, NULL);
 /*!40000 ALTER TABLE `active_bracers` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.active_transactions
@@ -55,20 +56,14 @@ CREATE TABLE IF NOT EXISTS `active_transactions` (
   KEY `FK_active_transactions_products` (`product_id`),
   CONSTRAINT `FK_active_transactions_active_bracers` FOREIGN KEY (`active_bracers_id`) REFERENCES `active_bracers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_active_transactions_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.active_transactions: ~8 rows (approximately)
+-- Dumping data for table attraction.active_transactions: ~2 rows (approximately)
 DELETE FROM `active_transactions`;
 /*!40000 ALTER TABLE `active_transactions` DISABLE KEYS */;
 INSERT INTO `active_transactions` (`id`, `title`, `product_id`, `quantity`, `total_price`, `time`, `active_bracers_id`, `reception`) VALUES
-	(1, 'Регистрация', NULL, 1, 45000.00, '2018-06-18 18:18:27', 49, NULL),
-	(2, 'Покупка', 5, 1, 3.00, '2018-06-19 11:24:15', 49, NULL),
-	(3, 'Покупка', 5, 1, 123123.00, '2018-06-19 11:24:15', 49, NULL),
-	(4, 'Покупка', 5, 1, 99999.00, '2018-06-19 11:24:15', 49, NULL),
-	(5, 'Покупка', 5, 1, 4444.00, '2018-06-19 11:24:15', 49, NULL),
-	(6, 'Покупка', 5, 1, 5555.00, '2018-06-19 11:24:15', 49, NULL),
-	(7, 'Покупка', 5, 1, 4343.00, '2018-06-19 11:24:15', 49, NULL),
-	(8, 'Покупка', 5, 1, 5353.00, '2018-06-19 11:24:15', 49, NULL);
+	(11, 'Регистрация', NULL, 1, 45000.00, '2018-06-19 14:31:55', 52, NULL),
+	(12, 'Регистрация', NULL, 1, 45000.00, '2018-06-19 14:32:02', 53, NULL);
 /*!40000 ALTER TABLE `active_transactions` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.bracers_history
@@ -97,14 +92,14 @@ CREATE TABLE IF NOT EXISTS `deposit` (
   `cash` decimal(10,2) NOT NULL,
   `expired` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8;
 
 -- Dumping data for table attraction.deposit: ~2 rows (approximately)
 DELETE FROM `deposit`;
 /*!40000 ALTER TABLE `deposit` DISABLE KEYS */;
 INSERT INTO `deposit` (`id`, `cash`, `expired`) VALUES
-	(75, -132000.00, NULL),
-	(76, 1000.00, NULL);
+	(79, 20000.00, NULL),
+	(80, 400003.00, NULL);
 /*!40000 ALTER TABLE `deposit` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.products
@@ -215,6 +210,32 @@ VALUES ('Пополнение баланса', b_cash, SYSDATE(), b_bracer_id);
 
 UPDATE `Attraction`.`deposit` SET `cash`=old_cash+b_cash
 WHERE `id`=b_deposit_id; 
+END//
+DELIMITER ;
+
+-- Dumping structure for procedure attraction.make_payment
+DELIMITER //
+CREATE DEFINER=`root`@`%` PROCEDURE `make_payment`(
+	IN `update_text` TINYTEXT,
+	IN `transactions_text` TINYTEXT
+
+
+
+
+
+)
+BEGIN
+
+SET @s = update_text;
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+
+SET @s = transactions_text;
+PREPARE stmt FROM @s;
+EXECUTE stmt;
+
+DEALLOCATE PREPARE stmt;
+
 END//
 DELIMITER ;
 
