@@ -184,6 +184,7 @@ void SalesForm::on_make_order_but_clicked()
     queryString.chop(1);
     queryString.append("; ");
 
+    qDebug()<<queryString;
     double cash = query.value("cash").toDouble();
     if(total>cash){
         QMessageBox::warning(this, "Неожиданная ситуация",
@@ -191,11 +192,16 @@ void SalesForm::on_make_order_but_clicked()
         return;
     }
 
-    if(!query.exec(QString("CALL make_payment(%1,%2)").arg(QString("UPDATE deposit SET cash=%1 WHERE id=%2;").arg(cash-total).arg(query.value("deposit_id").toInt()))
+    if(!query.exec(QString("CALL make_payment('%1','%2')")
+                   .arg(QString("UPDATE deposit SET cash=%1 WHERE id=%2;")
+                        .arg(cash-total)
+                        .arg(query.value("deposit_id").toInt()))
                    .arg(queryString))){
         QMessageBox::warning(this, "Неожиданная ситуация",
                              QString("Неудача!"));
         bDb.debugQuery(query);
         return;
     }
+    QMessageBox::information(this, "Успех",
+                             QString("<font color='green'>Успешно!"));
 }
