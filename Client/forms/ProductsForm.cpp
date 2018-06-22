@@ -42,7 +42,7 @@ ProductsForm::ProductsForm(QWidget *parent) :
         Q_UNUSED(prev)
 
         QPixmap pix;
-        QByteArray arr = products_model->data(products_model->index(cur.row(), products_model->fieldIndex("icon")),Qt::EditRole).toByteArray();
+        QByteArray arr = productsProxyModel->data(productsProxyModel->index(cur.row(), products_model->fieldIndex("icon")),Qt::EditRole).toByteArray();
         pix.loadFromData(arr,"PNG");
 
         ui->product_icon->setPixmap(pix);
@@ -78,11 +78,13 @@ void ProductsForm::on_refresh()
 
     products_model->setHeaderData(products_model->fieldIndex("title"),Qt::Horizontal,"Название");
     products_model->setHeaderData(products_model->fieldIndex("price"),Qt::Horizontal,"Цена");
-    products_model->setHeaderData(products_model->fieldIndex("comment"),Qt::Horizontal,"Комментарий");
+    products_model->setHeaderData(products_model->fieldIndex("comment"),Qt::Horizontal,"Комментарий");    
 
     ui->products_table->hideColumn(products_model->fieldIndex("icon"));
     ui->products_table->hideColumn(products_model->fieldIndex("id"));
     ui->products_table->hideColumn(products_model->fieldIndex("product_types_id"));
+    ui->products_table->hideColumn(products_model->fieldIndex("amount"));
+
     productsProxyModel->setFilterKeyColumn(products_model->fieldIndex("product_types_id"));
 
     ui->product_types_table->selectRow(0);
@@ -139,7 +141,7 @@ void ProductsForm::on_add_product_but_clicked()
 
 void ProductsForm::on_delete_product_but_clicked()
 {
-    products_model->removeRow(ui->products_table->currentIndex().row());
+    productsProxyModel->removeRow(ui->products_table->currentIndex().row());
 }
 
 void ProductsForm::on_change_product_icon_but_clicked()
@@ -154,7 +156,7 @@ void ProductsForm::on_change_product_icon_but_clicked()
     if (!image.save(&buffer, "PNG"))
         return;
 
-    products_model->setData(products_model->index(ui->products_table->currentIndex().row(),products_model->fieldIndex("icon")),byteArray,Qt::EditRole);
+    productsProxyModel->setData(productsProxyModel->index(ui->products_table->currentIndex().row(),products_model->fieldIndex("icon")),byteArray,Qt::EditRole);
 }
 
 

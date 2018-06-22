@@ -34,14 +34,14 @@ SalesForm::SalesForm(QWidget *parent) :
     connect(ui->types_listView->selectionModel(), &QItemSelectionModel::currentRowChanged, [this](QModelIndex cur, QModelIndex prev){
         Q_UNUSED(prev)
         QSqlRecord rec = typesModel.record(cur.row());
-        productsProxyModel.setFilterFixedString(rec.value("id").toString());
+        productsProxyModel.setTypeIdFilter(rec.value("id").toInt());
         ui->product_type_label->setText(rec.value("title").toString().toUpper());
     });
     connect(ui->add_action, &QAction::triggered, [this]{
         int row = ui->products_listView->currentIndex().row();
         int column = productsModel.fieldIndex("amount");
 
-        productsModel.setData(productsModel.index(row, column),productsModel.data(productsModel.index(row, column),Qt::EditRole).toInt()+1);
+        productsProxyModel.setData(productsProxyModel.index(row, column),productsProxyModel.data(productsProxyModel.index(row, column),Qt::EditRole).toInt()+1);
         int amount = ui->amount_label->text().toInt();
         double total_price = ui->total_price_label->text().toDouble();
         ui->amount_label->setText(QString::number(amount+1));
@@ -55,16 +55,16 @@ SalesForm::SalesForm(QWidget *parent) :
         int row = ui->products_listView->currentIndex().row();
         int column = productsModel.fieldIndex("amount");
 
-        int num = productsModel.data(productsModel.index(row, column),Qt::EditRole).toInt();
+        int num = productsProxyModel.data(productsProxyModel.index(row, column),Qt::EditRole).toInt();
         if(!num)return;
 
-        productsModel.setData(productsModel.index(row, column),--num);
+        productsProxyModel.setData(productsProxyModel.index(row, column),--num);
 
         int amount = ui->amount_label->text().toInt();
         double total_price = ui->total_price_label->text().toDouble();
         if(amount>1){
             ui->amount_label->setText(QString::number(--amount));
-            ui->total_price_label->setText(QString::number(total_price-productsModel.data(productsModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
+            ui->total_price_label->setText(QString::number(total_price-productsProxyModel.data(productsProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
         }
         else {
             on_clear_but_clicked();
@@ -74,6 +74,7 @@ SalesForm::SalesForm(QWidget *parent) :
     });
 
     on_refresh();
+    ui->types_listView->setCurrentIndex(productTypesProxyModel.index(0,0));
 }
 
 SalesForm::~SalesForm()
@@ -97,7 +98,6 @@ void SalesForm::on_refresh()
         return ;
     }
     ui->products_listView->setModelColumn(productsModel.fieldIndex("title"));
-    productsProxyModel.setFilterKeyColumn(productsModel.fieldIndex("product_types_id"));
 
     ui->cart_table->hideColumn(productsModel.fieldIndex("id"));
     ui->cart_table->hideColumn(productsModel.fieldIndex("product_types_id"));
@@ -160,7 +160,7 @@ void SalesForm::on_make_order_but_clicked()
     }
 
     QSqlQuery query;
-    if(!query.exec(QString("SELECT active_bracers.id, deposit_id, cash FROM (active_bracers INNER JOIN deposit ON deposit_id=deposit.id) WHERE code=%1;").arg(code))){
+    if(!query.exec(QString("SELECT active_bracers.id, deposit_id, cash FROM (active_bracers INNER JOIN deposit ON deposit_id=deposit.id) WHERE code=%1 AND NOT ISNULL(enter_time);").arg(code))){
         bDb.debugQuery(query);
         return;
     }
@@ -168,7 +168,7 @@ void SalesForm::on_make_order_but_clicked()
 
     if(!query.isValid()){
         QMessageBox::warning(this, "Неожиданная ситуация",
-                             QString("Карта не зарегистрирована!"));
+                             QString("Карта не зарегистрирована или не зафиксирован при входе!"));
         return;
     }
 
