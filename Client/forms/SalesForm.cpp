@@ -168,7 +168,7 @@ void SalesForm::on_make_order_but_clicked()
 
     if(!query.isValid()){
         QMessageBox::warning(this, "Неожиданная ситуация",
-                             QString("Карта не зарегистрирована или не зафиксирован при входе!"));
+                             QString("Карта не зарегистрирована или не зафиксирована при входе!"));
         return;
     }
 
