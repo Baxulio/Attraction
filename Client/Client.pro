@@ -43,7 +43,9 @@ SOURCES += \
     models/DashboardProxyModel.cpp \
     models/CustomSqlTableModel.cpp \
     forms/SalesForm.cpp \
-    models/SalesModel.cpp
+    models/ProductTypesProxyModel.cpp \
+    models/ProductsProxyModel.cpp \
+    models/CartProxyModel.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -62,7 +64,9 @@ HEADERS += \
     models/DashboardProxyModel.h \
     models/CustomSqlTableModel.h \
     forms/SalesForm.h \
-    models/SalesModel.h
+    models/ProductTypesProxyModel.h \
+    models/ProductsProxyModel.h \
+    models/CartProxyModel.h
 
 FORMS += \
         MainWindow.ui \

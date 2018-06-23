@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     Core \
-    AccessController \
+#    AccessController \
     Client \
 #    SalesService
 

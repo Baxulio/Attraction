@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>845</width>
-    <height>624</height>
+    <width>753</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -180,7 +180,7 @@
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Кликните &lt;/span&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;Извлечь информацию&lt;/span&gt;&lt;span style=&quot; color:#969696;&quot;&gt; и приложите браслет. Вся информация будет показана в подгруппе &lt;/span&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;Информация о браслете&lt;/span&gt;&lt;span style=&quot; color:#969696;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Приложите браслет. Вся информация будет показана в подгруппе &lt;/span&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;Информация о браслете&lt;/span&gt;&lt;span style=&quot; color:#969696;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -191,11 +191,8 @@
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QPushButton" name="retrieve_info_but">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+           <property name="enabled">
+            <bool>true</bool>
            </property>
            <property name="minimumSize">
             <size>
@@ -434,6 +431,9 @@ QAbstractButton:hover{
               <property name="text">
                <string>Кэш: </string>
               </property>
+              <property name="buddy">
+               <cstring>cash_doubleSpinBox</cstring>
+              </property>
              </widget>
             </item>
             <item>
@@ -549,6 +549,9 @@ QAbstractButton:hover{
          </property>
          <property name="wordWrap">
           <bool>true</bool>
+         </property>
+         <property name="buddy">
+          <cstring>return_remainder_but</cstring>
          </property>
         </widget>
        </item>
@@ -712,6 +715,13 @@ background-color: rgb(100, 100, 100,50%);
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>cash_doubleSpinBox</tabstop>
+  <tabstop>add_ballance_but</tabstop>
+  <tabstop>return_remainder_but</tabstop>
+  <tabstop>return_debt_but</tabstop>
+  <tabstop>back_but</tabstop>
+ </tabstops>
  <resources>
   <include location="../clientresources.qrc"/>
  </resources>
