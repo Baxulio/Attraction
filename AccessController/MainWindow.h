@@ -27,7 +27,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-//    DatabaseManager &bDb;
+    DatabaseManager &bDb;
 
     SettingsDialog *bSettings;
     QTimer bTimer;
