@@ -23,6 +23,9 @@
    </item>
    <item>
     <widget class="QLineEdit" name="lineEdit">
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
