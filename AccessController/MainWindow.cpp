@@ -141,7 +141,7 @@ void MainWindow::writeSettings()
 bool MainWindow::enter(quint32 code)
 {
     QSqlQuery query;
-    if(!query.exec(QString("SELECT id, enter_time,(select time_limit from tariff Where id =1) as time_limit FROM active_bracers WHERE code=%1").arg(code))){
+    if(!query.exec(QString("SELECT id, enter_time,(SELECT time_limit FROM tariff WHERE id =1) AS time_limit FROM active_bracers WHERE code=%1;").arg(code))){
         bDb.debugQuery(query);
         return false;
     }
