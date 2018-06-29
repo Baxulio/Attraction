@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>369</width>
-    <height>92</height>
+    <height>93</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,9 @@
    </item>
    <item>
     <widget class="QLineEdit" name="lineEdit">
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>

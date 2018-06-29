@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,9 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(&bTimer, &QTimer::timeout, [this]{
-        interrupt();
-    });
+    connect(&bTimer, &QTimer::timeout, this, &MainWindow::timeout);
     readSettings();
     initActionsConnections();
 
@@ -27,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
         }
         else exit(EXIT_FAILURE);
     });
+
+    ui->connectButton->click();
 }
 
 MainWindow::~MainWindow()
@@ -37,6 +38,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::wiegandCallback(quint32 code)
 {
+    qDebug()<<"fucka mucka: "<<code;
     if(bSettings->modeSettings().mode){
         if(!enter(code))return;
 
@@ -154,18 +156,7 @@ bool MainWindow::enter(quint32 code)
         ui->statusBar->showMessage("Уже зафиксирован при входе!",2000);
         return false;
     }
-
-    if(!query.exec(QString("UPDATE active_bracers "
-                           "SET enter_time=SYSDATE(), "
-                           "enter_number=%1, "
-                           "expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=%2) MINUTE "
-                           "WHERE id=%3")
-                   .arg(bSettings->modeSettings().bareerNumber)
-                   .arg(query.value("tariff_id").toInt())
-                   .arg(query.value("id").toInt()))){
-        bDb.debugQuery(query);
-        return false;
-    }
+    enterRec = query.record();
 
     return true;
 }
@@ -224,12 +215,6 @@ bool MainWindow::exit(quint32 code)
 
     if(cache==0){
         print("",query.record());
-        if(!query.exec(QString("CALL move_to_history(%1,%2)")
-                       .arg(bSettings->modeSettings().bareerNumber)
-                       .arg(query.value("id").toInt()))){
-            bDb.debugQuery(query);
-            return false;
-        }
         return true;
     }
     else if(cache<0){
@@ -270,6 +255,32 @@ void MainWindow::print(const QString &title, const QSqlRecord &record)
 
 void MainWindow::interrupt()
 {
+    QSqlQuery query;
+    if(bSettings->modeSettings().mode and !query.exec(QString("UPDATE active_bracers "
+                                                              "SET enter_time=SYSDATE(), "
+                                                              "enter_number=%1, "
+                                                              "expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=%2) MINUTE "
+                                                              "WHERE id=%3")
+                                                      .arg(bSettings->modeSettings().bareerNumber)
+                                                      .arg(enterRec.value("tariff_id").toInt())
+                                                      .arg(enterRec.value("id").toInt()))){
+        bDb.debugQuery(query);
+        return;
+    }
+
+    if(!bSettings->modeSettings().mode and !query.exec(QString("CALL move_to_history(%1,%2)")
+                                                       .arg(bSettings->modeSettings().bareerNumber)
+                                                       .arg(exitRec.value("id").toInt()))){
+        bDb.debugQuery(query);
+        return;
+    }
+    timeout();
+}
+
+void MainWindow::timeout()
+{
     digitalWrite(BAREER_PIN,LOW);
     bTimer.stop();
+    enterRec.clearValues();
+    exitRec.clearValues();
 }

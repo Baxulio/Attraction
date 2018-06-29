@@ -27,10 +27,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
-//    DatabaseManager &bDb;
+    DatabaseManager &bDb;
 
     SettingsDialog *bSettings;
     QTimer bTimer;
+
+    QSqlRecord enterRec;
+    QSqlRecord exitRec;
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -46,6 +50,7 @@ private:
     void print(const QString &title, const QSqlRecord &record);
 public slots:
     void interrupt();
+    void timeout();
 };
 
 #endif // MAINWINDOW_H
