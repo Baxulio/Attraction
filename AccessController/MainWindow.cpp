@@ -141,7 +141,7 @@ void MainWindow::writeSettings()
 bool MainWindow::enter(quint32 code)
 {
     QSqlQuery query;
-    if(!query.exec(QString("SELECT id, enter_time,(SELECT time_limit FROM tariff WHERE id =1) AS time_limit FROM active_bracers WHERE code=%1;").arg(code))){
+    if(!query.exec(QString("SELECT id, enter_time,(SELECT time_limit FROM tariff WHERE id=1) AS time_limit FROM active_bracers WHERE code=%1;").arg(code))){
         bDb.debugQuery(query);
         return false;
     }
@@ -167,7 +167,7 @@ bool MainWindow::exit(quint32 code)
     if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
                            "FROM ((active_bracers "
                            "INNER JOIN deposit ON deposit.id=deposit_id) "
-                           "INNER JOIN tariff ON tariff.id=tariff_id) "
+                           "INNER JOIN tariff ON tariff.id=1) "
                            "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
         bDb.debugQuery(query);
         return false;
@@ -204,7 +204,7 @@ bool MainWindow::exit(quint32 code)
         if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
                                "FROM ((active_bracers "
                                "INNER JOIN deposit ON deposit.id=deposit_id) "
-                               "INNER JOIN tariff ON tariff.id=tariff_id) "
+                               "INNER JOIN tariff ON tariff.id=1) "
                                "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
             bDb.debugQuery(query);
             return false;
@@ -259,10 +259,9 @@ void MainWindow::interrupt()
     if(bSettings->modeSettings().mode and !query.exec(QString("UPDATE active_bracers "
                                                               "SET enter_time=SYSDATE(), "
                                                               "enter_number=%1, "
-                                                              "expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=%2) MINUTE "
-                                                              "WHERE id=%3")
+                                                              "expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=1) MINUTE "
+                                                              "WHERE id=%2")
                                                       .arg(bSettings->modeSettings().bareerNumber)
-                                                      .arg(enterRec.value("tariff_id").toInt())
                                                       .arg(enterRec.value("id").toInt()))){
         bDb.debugQuery(query);
         return;
