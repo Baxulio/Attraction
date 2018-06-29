@@ -67,4 +67,5 @@ DatabaseManager::DatabaseManager():
     bDatabase(new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL")))
 {
     bDatabase->setConnectOptions("MYSQL_OPT_RECONNECT=true");
+    tariffModel = new QSqlTableModel(this,*bDatabase);
 }

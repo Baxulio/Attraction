@@ -12,7 +12,7 @@ class WieagandReaderDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit WieagandReaderDialog(QWidget *parent = 0, const QString &title="Приложите карту!");
+    explicit WieagandReaderDialog(QWidget *parent = 0, const QString &title="Приложите браслет!");
     ~WieagandReaderDialog();
 
     quint32 getCode();

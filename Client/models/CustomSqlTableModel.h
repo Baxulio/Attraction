@@ -1,6 +1,7 @@
 #ifndef CUSTOMSQLTABLEMODEL_H
 #define CUSTOMSQLTABLEMODEL_H
 
+#include "core_global.h"
 #include <QSqlTableModel>
 
 class CustomSqlTableModel : public QSqlTableModel

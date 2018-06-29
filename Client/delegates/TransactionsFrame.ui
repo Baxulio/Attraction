@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>289</width>
-    <height>381</height>
+    <width>254</width>
+    <height>199</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -275,7 +275,7 @@ QLabel:hover{
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_11">
+    <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0,0,0,0,1">
      <property name="spacing">
       <number>10</number>
      </property>
@@ -293,12 +293,12 @@ QLabel:hover{
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../clientresources.qrc">:/resources/glyphs/65.png</pixmap>
+        <pixmap resource="../clientresources.qrc">:/resources/glyphs/14.png</pixmap>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="tariff_label">
+      <widget class="QLabel" name="childs_label">
        <property name="font">
         <font>
          <pointsize>10</pointsize>
@@ -311,6 +311,27 @@ color: rgb(0, 170, 255);
        </property>
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="enter_number_9">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(150, 150, 150);</string>
+       </property>
+       <property name="text">
+        <string>Детей</string>
        </property>
       </widget>
      </item>
@@ -356,6 +377,9 @@ color: rgb(0, 170, 255);
         <font>
          <pointsize>10</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(255, 0, 0);</string>
        </property>
        <property name="text">
         <string/>

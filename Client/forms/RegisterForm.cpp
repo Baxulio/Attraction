@@ -2,10 +2,9 @@
 #include "ui_RegisterForm.h"
 
 #include "QMessageBox"
-#include "QDateTime"
-#include "QComboBox"
 
 #include <QSqlRecord>
+#include <QDateTime>
 
 #include "dialogs/WieagandReaderDialog.h"
 #include <QDebug>
@@ -13,13 +12,9 @@
 RegisterForm::RegisterForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RegisterForm),
-    bDb(DatabaseManager::instance()),
-    tariffModel(new QSqlTableModel(this))
+    bDb(DatabaseManager::instance())
 {
     ui->setupUi(this);
-    ui->tariff_comboBox->setModel(tariffModel);
-    connect(&bDb, &DatabaseManager::refresh, this, &RegisterForm::on_refresh);
-    on_refresh();
 }
 
 RegisterForm::~RegisterForm()
@@ -32,26 +27,10 @@ void RegisterForm::on_back_pushButton_clicked()
     emit back();
 }
 
-void RegisterForm::on_refresh()
-{
-    tariffModel->setTable("tariff");
-    if(!tariffModel->select()){
-        bDb.debugError(tariffModel->lastError());
-        return ;
-    }
-    ui->tariff_comboBox->setModelColumn(1);
-}
-
 void RegisterForm::on_register_bracer_but_clicked()
 {
-    int currentTariffIndx = ui->tariff_comboBox->currentIndex();
-
-    if(ui->bracer_number_spinBox->value()==0){
+    if(!ui->bracer_number_spinBox->value()){
         ui->bracer_number_spinBox->setFocus();
-        return;
-    }
-    else if(currentTariffIndx<0){
-        ui->tariff_comboBox->setFocus();
         return;
     }
 
@@ -60,12 +39,11 @@ void RegisterForm::on_register_bracer_but_clicked()
         return;
     }
     quint32 code=dialog.getCode();
-    if(code==0){
+    if(!code){
         QMessageBox::warning(this, "Неожиданная ситуация",
                              QString("Неверный ввод!"));
         return;
     }
-    int b_tariff_id = tariffModel->record(currentTariffIndx).value("id").toInt();
 
     QSqlQuery query;
     if(!query.exec(QString("SELECT * FROM `Attraction`.`active_bracers` WHERE code=%1").arg(code))){
@@ -84,12 +62,10 @@ void RegisterForm::on_register_bracer_but_clicked()
                              .arg(query.value("enter_number").toInt()));
         return;
     }
-    if(!query.exec(QString("CALL `register`('%1', '%2', '%3', '%4', '%5');")
-                   .arg(ui->cash_doubleSpinBox->value())
+    if(!query.exec(QString("CALL `register`('%1', '%2', '%3');")
+                   .arg(ui->childs_spinBox->value())
                    .arg(ui->bracer_number_spinBox->value())
-                   .arg(b_tariff_id)
-                   .arg(code)
-                   .arg(tariffModel->record(currentTariffIndx).value("price").toDouble())))
+                   .arg(code)))
         bDb.debugQuery(query);
 
     QMessageBox::information(this, "Успех",
@@ -127,10 +103,16 @@ void RegisterForm::on_drop_bracer_but_clicked()
                              QString("<font color='green'>Успешно удален!"));
 }
 
-void RegisterForm::on_tariff_comboBox_currentIndexChanged(int index)
+void RegisterForm::on_bracer_number_spinBox_valueChanged(int arg1)
 {
-    int time = tariffModel->data(tariffModel->index(index,3)).toInt();
-    ui->hours_label->setText(QString::number(time/60));
-    ui->minutes_label->setText(QString::number(time%60));
-    ui->price_label->setText(tariffModel->data(tariffModel->index(index,2)).toString());
+    ui->childs_spinBox->setValue(0);
+
+    arg1?ui->price_label->setText(bDb.tariffModel->record(0).value("price").toString()):
+         ui->price_label->setText("0");
+}
+
+void RegisterForm::on_childs_spinBox_valueChanged(int arg1)
+{
+    if(ui->bracer_number_spinBox->value())
+        ui->price_label->setText(QString("%1").arg(bDb.tariffModel->record(0).value("price").toDouble()+bDb.tariffModel->record(1).value("price").toDouble()*arg1));
 }

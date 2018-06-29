@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include "DatabaseManager.h"
-#include "models/CustomSqlTableModel.h"
 
 namespace Ui {
 class AdditionalSettingsForm;
@@ -33,7 +32,6 @@ private slots:
 private:
     Ui::AdditionalSettingsForm *ui;
     DatabaseManager &bDb;
-    CustomSqlTableModel *tariffs_model;
 
 signals:
     void back();

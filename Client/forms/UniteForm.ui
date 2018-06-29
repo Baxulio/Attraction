@@ -175,7 +175,7 @@
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Для каждого зарегистрированного браслета создается отдельный депозит, но иногда требуется закрепить некоторое количество браслетов за одним депозитом. Данный панель позволяет восполнить выше указанное требование! &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Важно: 1 - й внесенный в таблицу браслет является ведомым, т.е. остальные будут пресмыкаться к депозиту 1 - го! &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Для каждого зарегистрированного браслета создается отдельный депозит, но иногда требуется закрепить некоторое количество браслетов за одним депозитом. Данный панель позволяет восполнить выше указанное требование! &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Важно: 1 - й внесенный в таблицу браслет является ведущим, т.е. остальные будут пресмыкаться к депозиту 1 - го! &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

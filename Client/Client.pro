@@ -40,7 +40,6 @@ SOURCES += \
     models/ProxyModel.cpp \
     forms/AdditionalSettingsForm.cpp \
     delegates/TransactionsFrame.cpp \
-    models/DashboardProxyModel.cpp \
     models/CustomSqlTableModel.cpp \
     forms/SalesForm.cpp \
     models/ProductTypesProxyModel.cpp \
@@ -61,7 +60,6 @@ HEADERS += \
     forms/AdditionalSettingsForm.h\
     models/ProxyModel.h \
     delegates/TransactionsFrame.h \
-    models/DashboardProxyModel.h \
     models/CustomSqlTableModel.h \
     forms/SalesForm.h \
     models/ProductTypesProxyModel.h \

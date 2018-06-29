@@ -21,7 +21,7 @@ TransactionsFrame::~TransactionsFrame()
 void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &active)
 {
     ui->bracer_number_label->setText(record.value("bracer_number").toString());
-    ui->tariff_label->setText(record.value("title").toString());
+    ui->childs_label->setText(record.value("childs").toString());
     ui->enter_number_label->setText(record.value("enter_number").toString());
     ui->enter_time_label->setText(record.value("enter_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
 
@@ -29,13 +29,7 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
         ui->exit_number_label->setText(record.value("exit_number").toString());
         ui->exit_time_label->setText(record.value("exit_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
     }
-
-    if(record.value("cash").toDouble()<0){
-        ui->ballance_label->setText("<font color='red'>"+record.value("cash").toString());
-    }
-    else {
-        ui->ballance_label->setText("<font color='green'>"+record.value("cash").toString());
-    }
+    ui->ballance_label->setText(record.value("cash").toString());
 }
 
 void TransactionsFrame::computeTransactions(const int &id, const bool &active)

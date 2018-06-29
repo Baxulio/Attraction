@@ -7,8 +7,10 @@
 #include "core_global.h"
 
 #include <QObject>
+
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QSqlTableModel>
 
 class QSqlDatabase;
 
@@ -24,7 +26,7 @@ class CORESHARED_EXPORT DatabaseManager : public QObject
     Q_PROPERTY ( bool isConnected READ isConnected NOTIFY connectionChanged)
 
 public:
-    static void debugQuery(const QSqlQuery& query);
+    static void debugQuery(const QSqlQuery &query);
     static void debugError(const QSqlError &error);
 
     static DatabaseManager& instance();
@@ -32,6 +34,8 @@ public:
 
     bool isConnected();
     QSqlError lastError();
+
+    QSqlTableModel *tariffModel;
 
 public slots:
     void connectToDatabase(const QString& host = HOST,

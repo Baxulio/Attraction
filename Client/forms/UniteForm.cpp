@@ -45,7 +45,7 @@ void UniteForm::on_add_product_type_but_clicked()
     }
     if(ui->union_tableWidget->model()->data(ui->union_tableWidget->model()->index(0,3)).toInt()==query.value("deposit_id")){
                 QMessageBox::warning(this, "Неожиданная ситуация",
-                                     QString("Добавляемый браслет уже имеет общий депозит с ведомым браслетом!"));
+                                     QString("Добавляемый браслет уже имеет общий депозит с ведущим браслетом!"));
                 return;
             }
     int countRow = ui->union_tableWidget->rowCount();
@@ -70,7 +70,7 @@ void UniteForm::on_add_product_type_but_clicked()
     query.next();
     ui->union_tableWidget->model()->setData(ui->union_tableWidget->model()->index(countRow,2),query.value("cash").toDouble());
     if(countRow==0){
-        ui->union_tableWidget->setVerticalHeaderLabels(QStringList()<<"Ведомый депозит: ");
+        ui->union_tableWidget->setVerticalHeaderLabels(QStringList()<<"Ведущий депозит: ");
     }
 }
 
@@ -117,17 +117,16 @@ void UniteForm::on_unite_bracers_pushButton_clicked()
     for(int i=2; i<countRow; i++){
         query2+=QString("OR `code`=%1 ").arg(ui->union_tableWidget->model()->data(ui->union_tableWidget->model()->index(i,0)).toUInt());
     }
+    query2+=";";
 
-    if(!query.exec(QString("UPDATE `Attraction`.`deposit` SET `cash`=%1 WHERE `id`=%2;").arg(total).arg(depositId))){
+    if(!query.exec(QString("CALL `unite_bracers`('%1', '%2')")
+                   .arg(QString("UPDATE `Attraction`.`deposit` SET `cash`=%1 WHERE `id`=%2;")
+                       .arg(total).arg(depositId)).arg(query2))){
         bDb.debugQuery(query);
         return;
     }
-    if(!query.exec(query2+";")){
-        bDb.debugQuery(query);
-        return;
-    }
-    ui->union_tableWidget->clear();
+
+    ui->union_tableWidget->model()->removeRows(0,countRow);
     QMessageBox::information(this, "Успех",
                              QString("<font color='green'>Браслеты успешно объединены в один депозит!"));
-
 }

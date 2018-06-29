@@ -6,15 +6,12 @@ HistoryForm::HistoryForm(QWidget *parent):
     ui(new Ui::HistoryForm),
     transactions(new TransactionsFrame(parent)),
     bDb(DatabaseManager::instance()),
-    tariffModel(new QSqlTableModel(this)),
     historyModel(new QSqlTableModel(this)),
     proxyModel(new ProxyModel(this))
 {
     ui->setupUi(this);
 
     ui->transactions_frame->layout()->addWidget(transactions);
-
-    ui->tariff_combo->setModel(tariffModel);
 
     historyModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     proxyModel->setSourceModel(historyModel);
@@ -24,15 +21,14 @@ HistoryForm::HistoryForm(QWidget *parent):
     connect(ui->model_table->selectionModel(), &QItemSelectionModel::currentRowChanged, [this](QModelIndex cur, QModelIndex prev){
         Q_UNUSED(prev)
         QSqlQuery query;
-        if(!query.exec(QString("SELECT * "
-                               "FROM (bracers_history "
-                               "INNER JOIN tariff ON bracers_history.tariff_id=tariff.id) WHERE code=%1;").arg(historyModel->record(cur.row()).value("code").toUInt()))){
+        if(!query.exec(QString("SELECT * FROM bracers_history WHERE code=%1;")
+                       .arg(proxyModel->data(proxyModel->index(cur.row(),historyModel->fieldIndex("code")),Qt::EditRole).toUInt()))){
             bDb.debugQuery(query);
             return;
         }
         query.next();
         transactions->setHeaderData(query.record(),false);
-        transactions->computeTransactions(historyModel->record(cur.row()).value("id").toInt(),false);
+        transactions->computeTransactions(proxyModel->data(proxyModel->index(cur.row(),historyModel->fieldIndex("id")),Qt::EditRole).toUInt(),false);
     });
     on_refresh();
 }
@@ -44,40 +40,16 @@ HistoryForm::~HistoryForm()
 
 void HistoryForm::on_refresh()
 {
-    tariffModel->setTable("tariff");
-    if(!tariffModel->select()){
-        bDb.debugError(tariffModel->lastError());
-        return ;
-    }
-    ui->tariff_combo->setModelColumn(1);
-
     historyModel->setTable("bracers_history");
     if(!historyModel->select()){
         bDb.debugError(historyModel->lastError());
         return ;
     }
-    //    ui->people_label->setText(QString::number(historyModel->rowCount()));
-    //    QSqlQuery query;
-    //    if(!query.exec(QString("SELECT SUM(total_price) AS SUM "
-    //                           "FROM active_transactions;"))){
-    //        bDb.debugQuery(query);
-    //        return;
-    //    }
-    //    query.next();
-    //    if(!query.isValid())
-    //        ui->total_price_label->setText("0");
-    //    else ui->total_price_label->setText(query.value("SUM").toString());
 }
 
 void HistoryForm::on_back_but_clicked()
 {
     emit back();
-}
-
-void HistoryForm::on_tariff_combo_currentIndexChanged(int index)
-{
-    proxyModel->setTariff_id(tariffModel->data(tariffModel->index(index,tariffModel->fieldIndex("id"))).toInt());
-    proxyModel->invalidate();
 }
 
 void HistoryForm::on_filter_but_clicked()
@@ -102,9 +74,6 @@ void HistoryForm::on_clean_but_clicked()
 
     ui->in_to_dateTime->setDateTime(QDateTime());
     proxyModel->setIn_time_to(QDateTime());
-
-    ui->tariff_combo->setCurrentIndex(-1);
-    proxyModel->setTariff_id(0);
 
     proxyModel->invalidate();
 }

@@ -1,14 +1,21 @@
 #include "ProxyModel.h"
 #include <QSqlTableModel>
 
+#include "DatabaseManager.h"
+#include <QSqlRecord>
+#include <QBrush>
+#include <QColor>
+#include <QDebug>
 ProxyModel::ProxyModel(QObject *parent):
     QSortFilterProxyModel(parent),
     bracer_number(0),
     enter_number(0),
-    tariff_id(0),
+    childs_number(0),
     //history
-    exit_number(0)
+    exit_number(0),
   //
+    timeout(false),
+    warning(false)
 {
 }
 
@@ -29,7 +36,7 @@ bool ProxyModel::dateInRange(const QDateTime &dateTime, bool mode) const
 
 bool ProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
-    if(tariff_id && sourceModel()->data(sourceModel()->index(source_row, static_cast<QSqlTableModel*>(sourceModel())->fieldIndex("tariff_id"), source_parent)).toInt()!=tariff_id)
+    if(childs_number && sourceModel()->data(sourceModel()->index(source_row, static_cast<QSqlTableModel*>(sourceModel())->fieldIndex("childs"), source_parent)).toInt()!=childs_number)
         return false;
 
     if(enter_number && sourceModel()->data(sourceModel()->index(source_row, static_cast<QSqlTableModel*>(sourceModel())->fieldIndex("enter_number"), source_parent)).toInt()!=enter_number)
@@ -54,7 +61,7 @@ bool ProxyModel::filterAcceptsColumn(int source_column, const QModelIndex &sourc
 {
     Q_UNUSED(source_parent)
     QString fieldString = sourceModel()->headerData(source_column,Qt::Horizontal,Qt::DisplayRole).toString();
-    if(fieldString=="id" or fieldString=="code" or fieldString=="deposit_id" or fieldString=="tariff_id" or fieldString=="cash")
+    if(fieldString=="id" or fieldString=="code" or fieldString=="deposit_id" or fieldString=="cash" or fieldString=="childs")
         return false;
     return  true;
 }
@@ -67,6 +74,18 @@ QVariant ProxyModel::headerData(int section, Qt::Orientation orientation, int ro
         if(QSortFilterProxyModel::headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()=="enter_number")return "Номер входа";
         if(QSortFilterProxyModel::headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()=="exit_time")return "Время выхода";
         if(QSortFilterProxyModel::headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()=="exit_number")return "Номер выхода";
+        if(QSortFilterProxyModel::headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()=="expected_exit_time")return "Ожидаемое время выхода";
     }
     return QSortFilterProxyModel::headerData(section, orientation,role);
+}
+
+QVariant ProxyModel::data(const QModelIndex &index, int role) const
+{
+    if(role == Qt::BackgroundColorRole){
+        if(timeout and this->data(this->index(index.row(),3),Qt::EditRole).toDateTime() < QDateTime::currentDateTime())
+            return QBrush(QColor(Qt::red));
+        else if(warning and QDateTime::currentDateTime().secsTo(this->data(this->index(index.row(),3),Qt::EditRole).toDateTime())<1800)
+            return QBrush(QColor(Qt::yellow));
+    }
+    return QSortFilterProxyModel::data(index,role);
 }

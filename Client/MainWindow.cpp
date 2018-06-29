@@ -32,7 +32,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(bStackedWidget, &SlidingStackedWidget::currentChanged, [this](int n){
         if(qobject_cast<RegisterForm*>(bStackedWidget->widget(n)))ui->register_button->setChecked(true);
         else if(qobject_cast<UniteForm*>(bStackedWidget->widget(n)))ui->unite_button->setChecked(true);
-        else if(qobject_cast<StatusForm*>(bStackedWidget->widget(n)))ui->status_button->setChecked(true);
+        else if(qobject_cast<StatusForm*>(bStackedWidget->widget(n))){
+            ui->status_button->setChecked(true);
+            qobject_cast<StatusForm*>(bStackedWidget->widget(n))->on_retrieve_info_but_clicked();
+        }
         else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n)))ui->products_button->setChecked(true);
         else if(qobject_cast<DashboardForm*>(bStackedWidget->widget(n)))ui->dashboard_but->setChecked(true);
         else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n)))ui->additional_settings_button->setChecked(true);
@@ -120,7 +123,17 @@ void MainWindow::initActionsConnections()
         timer.stop();
     });
     ui->autoUpdate_button->setMenu(autoUpdate_menu);
-    connect(ui->autoUpdate_button, &QToolButton::clicked, [this](){emit bDb.refresh();});
+    connect(ui->autoUpdate_button, &QToolButton::clicked, [this]{
+        bDb.tariffModel->setTable("tariff");
+        if(!bDb.tariffModel->select()){
+            bDb.debugError(bDb.tariffModel->lastError());
+            return;
+        }
+        ui->adult_tariff_price_label->setText(bDb.tariffModel->record(0).value("price").toString());
+        ui->children_tariff_price_label->setText(bDb.tariffModel->record(1).value("price").toString());
+
+        emit bDb.refresh();
+    });
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     connect(ui->configureButton, &QPushButton::clicked, bSettings, &SettingsDialog::show);

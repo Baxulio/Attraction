@@ -12,9 +12,9 @@ public:
 
     void setBracerNumber(const int &num){bracer_number=num;}
     void setEnterNumber(const int &num){enter_number=num;}
+    void setChildsNumber(const int &num){childs_number=num;}
     void setIn_time_from(const QDateTime &time){in_time_from=time;}
     void setIn_time_to(const QDateTime &time){in_time_to=time;}
-    void setTariff_id(const int &id){tariff_id=id;}
 
     //history
     void setExitNumber(const int &num){exit_number=num;}
@@ -24,6 +24,9 @@ public:
 
     void invalidate();
 
+    void setTimeOutEnabled(bool b){timeout=b;}
+    void setWarningEnabled(bool b){warning=b;}
+
 private:
     bool dateInRange(const QDateTime &dateTime, bool mode) const;
 
@@ -32,13 +35,16 @@ private:
 
     int bracer_number;
     int enter_number;
-    int tariff_id;
+    int childs_number;
 
     //history
     int exit_number;
     QDateTime out_time_from;
     QDateTime out_time_to;
     //
+
+    bool timeout;
+    bool warning;
 
     // QSortFilterProxyModel interface
 protected:
@@ -48,7 +54,7 @@ protected:
     // QAbstractItemModel interface
 public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-
+    QVariant data(const QModelIndex &index, int role) const override;
 };
 
 #endif // PROXYMODEL_H

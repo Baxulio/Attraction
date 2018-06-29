@@ -1,5 +1,6 @@
 #include "DashboardForm.h"
 #include "ui_DashboardForm.h"
+
 #include <QItemSelectionModel>
 
 #include <QDebug>
@@ -8,14 +9,11 @@ DashboardForm::DashboardForm(QWidget *parent) :
     ui(new Ui::DashboardForm),
     transactions(new TransactionsFrame(parent)),
     bDb(DatabaseManager::instance()),
-    tariffModel(new QSqlTableModel(this)),
     activeModel(new QSqlTableModel(this)),
     proxyModel(new ProxyModel(this))
 {
     ui->setupUi(this);
     ui->transactions_frame->layout()->addWidget(transactions);
-
-    ui->tariff_combo->setModel(tariffModel);
 
     activeModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
     proxyModel->setSourceModel(activeModel);
@@ -25,10 +23,10 @@ DashboardForm::DashboardForm(QWidget *parent) :
     connect(ui->model_table->selectionModel(), &QItemSelectionModel::currentRowChanged, [this](QModelIndex cur, QModelIndex prev){
         Q_UNUSED(prev)
         QSqlQuery query;
-        if(!query.exec(QString("SELECT active_bracers.id, active_bracers.code, active_bracers.bracer_number, active_bracers.enter_time, active_bracers.enter_number, active_bracers.deposit_id, deposit.cash,tariff.title "
-                               "FROM ((active_bracers "
+        if(!query.exec(QString("SELECT active_bracers.id, active_bracers.code, active_bracers.bracer_number, active_bracers.enter_time, active_bracers.enter_number, active_bracers.deposit_id, deposit.cash,active_bracers.childs "
+                               "FROM (active_bracers "
                                "INNER JOIN deposit ON active_bracers.deposit_id=deposit.id) "
-                               "INNER JOIN tariff ON active_bracers.tariff_id=tariff.id) WHERE code=%1;").arg(activeModel->record(cur.row()).value("code").toUInt()))){
+                               "WHERE code=%1;").arg(activeModel->record(cur.row()).value("code").toUInt()))){
             bDb.debugQuery(query);
             return;
         }
@@ -46,19 +44,11 @@ DashboardForm::~DashboardForm()
 
 void DashboardForm::on_refresh()
 {
-    tariffModel->setTable("tariff");
-    if(!tariffModel->select()){
-        bDb.debugError(tariffModel->lastError());
-        return ;
-    }
-    ui->tariff_combo->setModelColumn(1);
-
     activeModel->setTable("active_bracers");
     if(!activeModel->select()){
         bDb.debugError(activeModel->lastError());
         return ;
     }
-    ui->people_label->setText(QString::number(activeModel->rowCount()));
     QSqlQuery query;
     if(!query.exec(QString("SELECT SUM(total_price) AS SUM "
                            "FROM active_transactions;"))){
@@ -69,6 +59,17 @@ void DashboardForm::on_refresh()
     if(!query.isValid())
         ui->total_price_label->setText("0");
     else ui->total_price_label->setText(query.value("SUM").toString());
+
+    int rows = activeModel->rowCount();
+    int children = 0;
+
+    QSqlRecord rec;
+    for(int i=0; i<rows; i++){
+        rec = activeModel->record(i);
+        children += rec.value("childs").toInt();
+    }
+    ui->children_label->setText(QString::number(children));
+    ui->people_label->setText(QString::number(rows));
 }
 
 void DashboardForm::on_back_but_clicked()
@@ -84,14 +85,14 @@ void DashboardForm::on_clean_but_clicked()
     ui->enter_number_spin->setValue(0);
     proxyModel->setEnterNumber(0);
 
+    ui->childs_spin->setValue(0);
+    proxyModel->setChildsNumber(0);
+
     ui->in_from_dateTime->setDateTime(QDateTime());
     proxyModel->setIn_time_from(QDateTime());
 
     ui->in_to_dateTime->setDateTime(QDateTime());
     proxyModel->setIn_time_to(QDateTime());
-
-    ui->tariff_combo->setCurrentIndex(-1);
-    proxyModel->setTariff_id(0);
 
     proxyModel->invalidate();
 }
@@ -100,13 +101,18 @@ void DashboardForm::on_filter_but_clicked()
 {
     proxyModel->setBracerNumber(ui->bracer_number_spin->value());
     proxyModel->setEnterNumber(ui->enter_number_spin->value());
+    proxyModel->setChildsNumber(ui->childs_spin->value());
     proxyModel->setIn_time_from(ui->in_from_dateTime->dateTime());
     proxyModel->setIn_time_to(ui->in_to_dateTime->dateTime());
     proxyModel->invalidate();
 }
 
-void DashboardForm::on_tariff_combo_currentIndexChanged(int index)
+void DashboardForm::on_time_out_but_clicked(bool checked)
 {
-    proxyModel->setTariff_id(tariffModel->data(tariffModel->index(index,tariffModel->fieldIndex("id"))).toInt());
-    proxyModel->invalidate();
+    proxyModel->setTimeOutEnabled(checked);
+}
+
+void DashboardForm::on_warning_but_clicked(bool checked)
+{
+    proxyModel->setWarningEnabled(checked);
 }

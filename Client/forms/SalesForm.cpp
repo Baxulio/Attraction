@@ -45,7 +45,7 @@ SalesForm::SalesForm(QWidget *parent) :
         int amount = ui->amount_label->text().toInt();
         double total_price = ui->total_price_label->text().toDouble();
         ui->amount_label->setText(QString::number(amount+1));
-        ui->total_price_label->setText(QString::number(total_price+productsModel.data(productsModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
+        ui->total_price_label->setText(QString::number(total_price+productsProxyModel.data(productsProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
 
         cartProxyModel.invalidate();
         ui->cart_table->reset();

@@ -27,12 +27,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         Core.cpp \
-    DatabaseManager.cpp
+    DatabaseManager.cpp \
 
 HEADERS += \
         Core.h \
         core_global.h \ 
-    DatabaseManager.h
+    DatabaseManager.h \
 
 unix {
     target.path = /usr/lib

@@ -2,8 +2,9 @@
 #define HISTORYFORM_H
 
 #include <QWidget>
-#include "delegates/TransactionsFrame.h"
 #include <QSqlTableModel>
+
+#include "delegates/TransactionsFrame.h"
 #include "models/ProxyModel.h"
 
 namespace Ui {
@@ -20,20 +21,15 @@ public:
 
 private slots:
     void on_refresh();
-
     void on_back_but_clicked();
-
-    void on_tariff_combo_currentIndexChanged(int index);
-
     void on_filter_but_clicked();
-
     void on_clean_but_clicked();
 
 private:
     Ui::HistoryForm *ui;
     TransactionsFrame *transactions;
     DatabaseManager &bDb;
-    QSqlTableModel *tariffModel, *historyModel;
+    QSqlTableModel *historyModel;
     ProxyModel *proxyModel;
 
 signals:

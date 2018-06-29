@@ -22,12 +22,12 @@ private:
     DatabaseManager &bDb;
     QSqlRecord currentRecord;
 
+public slots:
+    void on_retrieve_info_but_clicked();
+
 private slots:
     bool retrieve_info(const quint32 &code);
     void on_back_but_clicked();
-    void on_retrieve_info_but_clicked();
-    void on_add_ballance_but_clicked();
-    void on_return_remainder_but_clicked();
     void on_return_debt_but_clicked();
 
 signals:

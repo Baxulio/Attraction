@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include "DatabaseManager.h"
-#include <QSqlTableModel>
 
 namespace Ui {
 class RegisterForm;
@@ -20,17 +19,16 @@ public:
 private:
     Ui::RegisterForm *ui;
     DatabaseManager &bDb;
-    QSqlTableModel *tariffModel;
 
 signals:
     void back();
 
 private slots:
-    void on_refresh();
     void on_back_pushButton_clicked();
     void on_register_bracer_but_clicked();
     void on_drop_bracer_but_clicked();
-    void on_tariff_comboBox_currentIndexChanged(int index);
+    void on_bracer_number_spinBox_valueChanged(int arg1);
+    void on_childs_spinBox_valueChanged(int arg1);
 };
 
 #endif // REGISTERFORM_H
