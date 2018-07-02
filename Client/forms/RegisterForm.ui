@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>454</width>
-    <height>588</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../clientresources.qrc">
+        <iconset>
          <normaloff>:/resources/glyphs/15.png</normaloff>:/resources/glyphs/15.png</iconset>
        </property>
        <property name="flat">
@@ -134,7 +134,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="pixmap">
-          <pixmap resource="../clientresources.qrc">:/resources/glyphs/13.png</pixmap>
+          <pixmap>:/resources/glyphs/13.png</pixmap>
          </property>
         </widget>
        </item>
@@ -458,7 +458,7 @@ QAbstractButton:hover{
        <item>
         <widget class="QLabel" name="label_7">
          <property name="pixmap">
-          <pixmap resource="../clientresources.qrc">:/resources/glyphs/51.png</pixmap>
+          <pixmap>:/resources/glyphs/51.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>false</bool>
@@ -566,8 +566,6 @@ QAbstractButton:hover{
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../clientresources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

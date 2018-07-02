@@ -204,7 +204,7 @@ void MainWindow::initActionsConnections()
                 return;
             }
         }
-        StatusForm *statusForm = new StatusForm(this);
+        StatusForm *statusForm = new StatusForm(*bSettings, this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(statusForm));
         connect(statusForm, &StatusForm::back, [this, statusForm](){
             if(bStackedWidget->count()<2)return;
