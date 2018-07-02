@@ -35,7 +35,7 @@ private:
     QSqlRecord enterRec;
     QSqlRecord exitRec;
 
-
+    bool isInterrupted;
 protected:
     void closeEvent(QCloseEvent *event) override;
 
@@ -51,6 +51,7 @@ private:
 public slots:
     void interrupt();
     void timeout();
+    void openBareer();
 };
 
 #endif // MAINWINDOW_H
