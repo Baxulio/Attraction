@@ -18,20 +18,24 @@ public:
         QString password;
         quint32 port;
     };
+    struct BareerSettings{
+        QString host;
+        quint32 port;
+    };
 
-    explicit SettingsDialog(QWidget *parent = nullptr,
-                            ServerSettings server = ServerSettings{QString("localhost"),
-                            QString("root"),
-                            QString(""),
-                            quint32(3306)});
+    explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog();
 
     ServerSettings serverSettings() const {return bServerSettings;}
     void setServerSettings(const ServerSettings server);
 
+    BareerSettings bareerSettings() const {return bBareerSettings;}
+    void setBareerSettings(const BareerSettings bareer);
+
 private:
     Ui::SettingsDialog *ui = nullptr;
     ServerSettings bServerSettings;
+    BareerSettings bBareerSettings;
 
 private slots:
     void apply();

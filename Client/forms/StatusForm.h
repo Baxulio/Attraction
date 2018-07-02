@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "delegates/TransactionsFrame.h"
+#include <dialogs/SettingsDialog.h>
 
 namespace Ui {
 class StatusForm;
@@ -13,13 +14,14 @@ class StatusForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit StatusForm(QWidget *parent = 0);
+    explicit StatusForm(SettingsDialog &set, QWidget *parent = 0);
     ~StatusForm();
 
 private:
     Ui::StatusForm *ui;
     TransactionsFrame *transactionsFrame;
     DatabaseManager &bDb;
+    SettingsDialog &bSetings;
     QSqlRecord currentRecord;
 
 public slots:
