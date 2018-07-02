@@ -8,23 +8,43 @@
 #include <QDateTime>
 #include <QDebug>
 
+#include <QTcpSocket>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     bDb(DatabaseManager::instance()),
-    bSettings(new SettingsDialog(this))
+    server(new QTcpServer(this)),
+    bSettings(new SettingsDialog(this)),
+    fromClient(false)
 {
     ui->setupUi(this);
 
+    if(!server->listen(QHostAddress::AnyIPv4, 1234))
+        close();
+
+    connect(server, &QTcpServer::newConnection, [this]{
+        QTcpSocket *socket = server->nextPendingConnection();
+        connect(socket, &QTcpSocket::readyRead, [this,socket]{
+            if(socket->readAll()!=QByteArray::fromStdString("kuwoy"))
+                return;
+            fromClient=true;
+            openBareer();
+
+        });
+        connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
+    });
+
     connect(&bTimer, &QTimer::timeout, this, &MainWindow::timeout);
+
     readSettings();
     initActionsConnections();
 
-    connect(&bDb,&DatabaseManager::connectionChanged, [this](bool status){
+    connect(&bDb,&DatabaseManager::connectionChanged, [this](const bool status){
         if(status){
             ui->statusBar->showMessage("Successfully connected!");
         }
-        else exit(EXIT_FAILURE);
+        else close();
     });
 
     ui->connectButton->click();
@@ -38,18 +58,17 @@ MainWindow::~MainWindow()
 
 void MainWindow::wiegandCallback(quint32 code)
 {
+    fromClient=false;
     qDebug()<<"fucka mucka: "<<code;
     if(bSettings->modeSettings().mode){
         if(!enter(code))return;
 
-        isInterrupted=false;
         openBareer();
         return;
     }
 
     if(!exit(code))return;
 
-    isInterrupted=false;
     openBareer();
 }
 
@@ -167,65 +186,65 @@ bool MainWindow::enter(quint32 code)
 
 bool MainWindow::exit(quint32 code)
 {
-    QSqlQuery query;
-    if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
-                           "FROM ((active_bracers "
-                           "INNER JOIN deposit ON deposit.id=deposit_id) "
-                           "INNER JOIN tariff ON tariff.id=1) "
-                           "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
-        bDb.debugQuery(query);
-        return false;
-    }
+    //    QSqlQuery query;
+    //    if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
+    //                           "FROM ((active_bracers "
+    //                           "INNER JOIN deposit ON deposit.id=deposit_id) "
+    //                           "INNER JOIN tariff ON tariff.id=1) "
+    //                           "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
+    //        bDb.debugQuery(query);
+    //        return false;
+    //    }
 
-    query.next();
+    //    query.next();
 
-    if(!query.isValid()){
-        ui->statusBar->showMessage("Карта не зарегистрирована!",2000);
-        return false;
-    }
+    //    if(!query.isValid()){
+    //        ui->statusBar->showMessage("Карта не зарегистрирована!",2000);
+    //        return false;
+    //    }
 
-    QDateTime enterTime = query.value("enter_time").toDateTime();
+    //    QDateTime enterTime = query.value("enter_time").toDateTime();
 
-    quint64 timeLimit= enterTime.secsTo(query.value("expected_exit_time").toDateTime())/60;
-    quint64 elapsed = enterTime.secsTo(query.value("cur_date_time").toDateTime())/60;
+    //    quint64 timeLimit= enterTime.secsTo(query.value("expected_exit_time").toDateTime())/60;
+    //    quint64 elapsed = enterTime.secsTo(query.value("cur_date_time").toDateTime())/60;
 
-    if(elapsed>timeLimit){
-        //here goes penalty
-        double cache = query.value("cash").toDouble();
+    //    if(elapsed>timeLimit){
+    //        //here goes penalty
+    //        double cache = query.value("cash").toDouble();
 
-        int minutes = int(elapsed%60==0?elapsed/60:1+elapsed/60)*60;
+    //        int minutes = int(elapsed%60==0?elapsed/60:1+elapsed/60)*60;
 
-        cache-=minutes*(query.value("price").toDouble()/timeLimit);
+    //        cache-=minutes*(query.value("price").toDouble()/timeLimit);
 
-        if(!query.exec(QString("CALL penalty(%1,%2,%3,%4);")
-                       .arg(minutes)
-                       .arg(query.value("id").toInt())
-                       .arg(cache)
-                       .arg(query.value("deposit_id").toInt()))){
-            bDb.debugQuery(query);
-            return false;
-        }
-        if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
-                               "FROM ((active_bracers "
-                               "INNER JOIN deposit ON deposit.id=deposit_id) "
-                               "INNER JOIN tariff ON tariff.id=1) "
-                               "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
-            bDb.debugQuery(query);
-            return false;
-        }
-    }
+    //        if(!query.exec(QString("CALL penalty(%1,%2,%3,%4);")
+    //                       .arg(minutes)
+    //                       .arg(query.value("id").toInt())
+    //                       .arg(cache)
+    //                       .arg(query.value("deposit_id").toInt()))){
+    //            bDb.debugQuery(query);
+    //            return false;
+    //        }
+    //        if(!query.exec(QString("SELECT *, SYSDATE() AS cur_date_time "
+    //                               "FROM ((active_bracers "
+    //                               "INNER JOIN deposit ON deposit.id=deposit_id) "
+    //                               "INNER JOIN tariff ON tariff.id=1) "
+    //                               "WHERE code=%1 AND NOT ISNULL(enter_time)").arg(code))){
+    //            bDb.debugQuery(query);
+    //            return false;
+    //        }
+    //    }
 
-    double cache = query.value("cash").toDouble();
+    //    double cache = query.value("cash").toDouble();
+
+    //    if(cache<0){
+    //        return false;
+    //    }
+
+    //    exitRec=query.record();
+    //    return true;
 
 
-    if(cache<0){
-        print("Долг",query.record());
-        return false;
-    }
-
-    print("",query.record());
-    exitRec=query.record();
-    return true;
+    return false;
 }
 
 void MainWindow::print(const QString &title, const QSqlRecord &record)
@@ -259,7 +278,11 @@ void MainWindow::interrupt()
     if(isInterrupted)return;
 
     isInterrupted=true;
-
+    if(fromClient){
+        timeout();
+        fromClient = false;
+        return;
+    }
     QSqlQuery query;
 
     switch(bSettings->modeSettings().mode){
@@ -293,22 +316,22 @@ void MainWindow::interrupt()
 
         //EXIT
     case false: {
-        quint8 entered_childs = exitRec.value("entered_childs").toUInt();
-        if(entered_childs and !query.exec(QString("UPDATE active_bracers "
-                                                  "SET entered_childs=%1 "
-                                                  "WHERE id=%2")
-                                          .arg(--entered_childs)
-                                          .arg(exitRec.value("id").toInt()))){
-            bDb.debugQuery(query);
-            return;
-        }
-        else if(!query.exec(QString("CALL move_to_history(%1,%2)")
-                            .arg(bSettings->modeSettings().bareerNumber)
-                            .arg(exitRec.value("id").toInt()))){
-            bDb.debugQuery(query);
-            return;
-        }
-        break;
+        //        quint8 entered_childs = exitRec.value("entered_childs").toUInt();
+        //        if(entered_childs and !query.exec(QString("UPDATE active_bracers "
+        //                                                  "SET entered_childs=%1 "
+        //                                                  "WHERE id=%2")
+        //                                          .arg(--entered_childs)
+        //                                          .arg(exitRec.value("id").toInt()))){
+        //            bDb.debugQuery(query);
+        //            return;
+        //        }
+        //        else if(!query.exec(QString("CALL move_to_history(%1,%2)")
+        //                            .arg(bSettings->modeSettings().bareerNumber)
+        //                            .arg(exitRec.value("id").toInt()))){
+        //            bDb.debugQuery(query);
+        //            return;
+        //        }
+        //        break;
     }
     }
 
@@ -325,6 +348,7 @@ void MainWindow::timeout()
 
 void MainWindow::openBareer()
 {
+    isInterrupted=false;
     digitalWrite(BAREER_PIN,HIGH);
     bTimer.start(bSettings->modeSettings().wait_time*1000);
 }

@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTcpServer>
+
 #include <DatabaseManager.h>
 #include <QSqlRecord>
 
@@ -29,13 +31,15 @@ private:
     Ui::MainWindow *ui;
     DatabaseManager &bDb;
 
+    QTcpServer *server = nullptr;
+
     SettingsDialog *bSettings;
     QTimer bTimer;
 
     QSqlRecord enterRec;
     QSqlRecord exitRec;
 
-    bool isInterrupted;
+    bool isInterrupted, fromClient;
 protected:
     void closeEvent(QCloseEvent *event) override;
 
