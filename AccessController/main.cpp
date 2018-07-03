@@ -79,6 +79,7 @@ void reset_timeout_timer(long usec) {
 }
 
 void wiegand_timeout(int u) {
+    Q_UNUSED(u)
     wiegand_sequence_reset();
     if(wds.code_valid and digitalRead(BAREER_PIN)==LOW){
         w->wiegandCallback(wds.full_code);

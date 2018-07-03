@@ -51,7 +51,6 @@ private:
     bool enter(quint32 code);
     bool exit(quint32 code);
 
-    void print(const QString &title, const QSqlRecord &record);
 public slots:
     void interrupt();
     void timeout();
