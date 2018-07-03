@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>829</width>
-    <height>594</height>
+    <width>718</width>
+    <height>542</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Attraction</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="clientresources.qrc">
     <normaloff>:/resources/logo.png</normaloff>:/resources/logo.png</iconset>
   </property>
   <property name="styleSheet">
@@ -162,7 +162,7 @@ QPushButton:hover{
           <string>Соединить</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="clientresources.qrc">
            <normaloff>:/resources/glyphs/23.png</normaloff>:/resources/glyphs/23.png</iconset>
          </property>
         </widget>
@@ -181,7 +181,7 @@ QPushButton:hover{
           <string>Разъединить</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="clientresources.qrc">
            <normaloff>:/resources/glyphs/50.png</normaloff>:/resources/glyphs/50.png</iconset>
          </property>
         </widget>
@@ -228,7 +228,7 @@ QPushButton:hover{
           <string>Настройки</string>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="clientresources.qrc">
            <normaloff>:/resources/glyphs/34.png</normaloff>:/resources/glyphs/34.png</iconset>
          </property>
         </widget>
@@ -389,7 +389,7 @@ QPushButton:hover{
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="clientresources.qrc">
            <normaloff>:/resources/glyphs/info.png</normaloff>:/resources/glyphs/info.png</iconset>
          </property>
          <property name="iconSize">
@@ -557,7 +557,7 @@ QPushButton:checked{
            <string>Регистрация</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/13.png</normaloff>:/resources/glyphs/13.png</iconset>
           </property>
           <property name="checkable">
@@ -595,7 +595,7 @@ QPushButton:checked{
            <string>Объединение</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/14.png</normaloff>:/resources/glyphs/14.png</iconset>
           </property>
           <property name="checkable">
@@ -633,7 +633,7 @@ QPushButton:checked{
            <string>Статус</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/33.png</normaloff>:/resources/glyphs/33.png</iconset>
           </property>
           <property name="checkable">
@@ -735,7 +735,7 @@ QPushButton:checked{
            <string>Покупка</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/store.png</normaloff>:/resources/store.png</iconset>
           </property>
           <property name="iconSize">
@@ -843,7 +843,7 @@ QPushButton:checked{
            <string>Текущее</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/73.png</normaloff>:/resources/glyphs/73.png</iconset>
           </property>
           <property name="checkable">
@@ -881,7 +881,7 @@ QPushButton:checked{
            <string>История</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/62.png</normaloff>:/resources/glyphs/62.png</iconset>
           </property>
           <property name="checkable">
@@ -983,7 +983,7 @@ QPushButton:checked{
            <string>Продукты</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/55.png</normaloff>:/resources/glyphs/55.png</iconset>
           </property>
           <property name="checkable">
@@ -1021,7 +1021,7 @@ QPushButton:checked{
            <string>Дополнительное</string>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="clientresources.qrc">
             <normaloff>:/resources/glyphs/19.png</normaloff>:/resources/glyphs/19.png</iconset>
           </property>
           <property name="checkable">
@@ -1140,7 +1140,7 @@ background-color: rgb(255, 170, 0);
                <string>Отключено</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="clientresources.qrc">
                 <normaloff>:/resources/glyphs/45-2.png</normaloff>:/resources/glyphs/45-2.png</iconset>
               </property>
               <property name="iconSize">
@@ -1310,6 +1310,8 @@ background-color: rgb(255, 170, 0);
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="clientresources.qrc"/>
+ </resources>
  <connections/>
 </ui>
