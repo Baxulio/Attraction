@@ -32,6 +32,8 @@ private slots:
     void on_back_but_clicked();
     void on_return_debt_but_clicked();
 
+    void on_allow_but_clicked();
+
 signals:
     void back();
 };

@@ -396,6 +396,40 @@ background-color: rgb(100, 100, 100,50%);
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="allow_but">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QAbstractButton{
+color: rgb(255, 255, 255);
+border:none;
+background-color: rgb(100, 100, 100);
+
+}
+QAbstractButton:hover{
+/*background-color: rgb(255, 170, 0);*/
+background-color: rgb(100, 100, 100,50%);
+
+}</string>
+         </property>
+         <property name="text">
+          <string>Выпустить</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

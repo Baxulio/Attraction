@@ -68,14 +68,6 @@ void StatusForm::on_retrieve_info_but_clicked()
 
 void StatusForm::on_return_debt_but_clicked()
 {
-    QTcpSocket socket;
-    socket.connectToHost(bSetings.bareerSettings().host, bSetings.bareerSettings().port,QTcpSocket::WriteOnly);
-    if(!socket.waitForConnected(3000)){
-        QMessageBox::warning(this, "Неожиданная ситуация",
-                             QString("Не удалось подключиться к турникету!"));
-        return;
-    }
-
     WieagandReaderDialog dialog(this);
     if(dialog.exec() != QDialog::Accepted){
         return;
@@ -98,12 +90,25 @@ void StatusForm::on_return_debt_but_clicked()
         bDb.debugQuery(query);
         return;
     }
-    /////here is code for opening gate
-    ///
 
-    socket.write("kuwoy");
-    ///
-    ///
     if(retrieve_info(code))
         transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
+}
+
+void StatusForm::on_allow_but_clicked()
+{
+    QTcpSocket *socket = new QTcpSocket(this);
+    socket->connectToHost(bSetings.bareerSettings().host, bSetings.bareerSettings().port);
+    if(!socket->waitForConnected(3000)){
+        QMessageBox::warning(this, "Неожиданная ситуация",
+                             QString("Не удалось подключиться к турникету!"));
+        return;
+    }
+
+    /////here is code for opening gate
+    ///
+    socket->write("kuwoy");
+    socket->deleteLater();
+    ///
+    ///
 }

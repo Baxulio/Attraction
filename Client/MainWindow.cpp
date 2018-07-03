@@ -317,6 +317,12 @@ void MainWindow::readSettings()
     server.port = settings.value("server_port",quint32()).toUInt();
 
     bSettings->setServerSettings(server);
+
+    SettingsDialog::BareerSettings bareer;
+    bareer.host = settings.value("bareer_host", QString()).toString();
+    bareer.port = settings.value("bareer_port", quint32()).toUInt();
+
+    bSettings->setBareerSettings(bareer);
 }
 
 void MainWindow::writeSettings()
@@ -329,4 +335,8 @@ void MainWindow::writeSettings()
     settings.setValue("server_user", server.user);
     settings.setValue("server_password", server.password);
     settings.setValue("server_port", server.port);
+
+    SettingsDialog::BareerSettings bareer = bSettings->bareerSettings();
+    settings.setValue("bareer_host", bareer.host);
+    settings.setValue("bareer_port", bareer.port);
 }
