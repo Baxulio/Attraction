@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    if(!server->listen(QHostAddress::AnyIPv4, 1234))
+    if(bSettings->modeSettings().mode and !server->listen(QHostAddress::AnyIPv4, 1234))
         close();
 
     connect(server, &QTcpServer::newConnection, [this]{

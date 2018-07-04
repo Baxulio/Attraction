@@ -9,10 +9,11 @@
 #include <QSqlDriver>
 #include "dialogs/WieagandReaderDialog.h"
 
-SalesForm::SalesForm(QWidget *parent) :
+SalesForm::SalesForm(SettingsDialog &set, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SalesForm),
-    bDb(DatabaseManager::instance())
+    bDb(DatabaseManager::instance()),
+    bSetings(set)
 {
     ui->setupUi(this);
 
@@ -28,6 +29,8 @@ SalesForm::SalesForm(QWidget *parent) :
 
     cartProxyModel.setSourceModel(&productsModel);
     ui->cart_table->setModel(&cartProxyModel);
+    ui->cart_table->addAction(ui->add_action);
+    ui->cart_table->addAction(ui->remove_action);
 
     connect(&bDb, &DatabaseManager::refresh, this, &SalesForm::on_refresh);
 
@@ -38,37 +41,62 @@ SalesForm::SalesForm(QWidget *parent) :
         ui->product_type_label->setText(rec.value("title").toString().toUpper());
     });
     connect(ui->add_action, &QAction::triggered, [this]{
-        int row = ui->products_listView->currentIndex().row();
         int column = productsModel.fieldIndex("amount");
-
-        productsProxyModel.setData(productsProxyModel.index(row, column),productsProxyModel.data(productsProxyModel.index(row, column),Qt::EditRole).toInt()+1);
-        int amount = ui->amount_label->text().toInt();
         double total_price = ui->total_price_label->text().toDouble();
-        ui->amount_label->setText(QString::number(amount+1));
+
+        if(ui->cart_table->hasFocus()){
+            int amount = ui->amount_label->text().toInt();
+            if(!amount)return;
+            ui->amount_label->setText(QString::number(amount+1));
+            int row = ui->cart_table->currentIndex().row();
+            cartProxyModel.setData(cartProxyModel.index(row,column),cartProxyModel.data(cartProxyModel.index(row,column), Qt::EditRole).toInt()+1);
+            ui->total_price_label->setText(QString::number(total_price+cartProxyModel.data(cartProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
+            return;
+        }
+
+        int row = ui->products_listView->currentIndex().row();
+        productsProxyModel.setData(productsProxyModel.index(row, column),productsProxyModel.data(productsProxyModel.index(row, column),Qt::EditRole).toInt()+1);
+
         ui->total_price_label->setText(QString::number(total_price+productsProxyModel.data(productsProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
+
+        int amount = ui->amount_label->text().toInt();
+        ui->amount_label->setText(QString::number(amount+1));
 
         cartProxyModel.invalidate();
         ui->cart_table->reset();
+
+
     });
 
     connect(ui->remove_action, &QAction::triggered, [this]{
-        int row = ui->products_listView->currentIndex().row();
+        int amount = ui->amount_label->text().toInt();
+        if(amount>1)
+            ui->amount_label->setText(QString::number(--amount));
+        else {
+            on_clear_but_clicked();
+            return;
+        }
+
         int column = productsModel.fieldIndex("amount");
+        double total_price = ui->total_price_label->text().toDouble();
+
+        if(ui->cart_table->hasFocus()){
+            int row = ui->cart_table->currentIndex().row();
+            int num = cartProxyModel.data(cartProxyModel.index(row, column),Qt::EditRole).toInt();
+            if(!num)return;
+            cartProxyModel.setData(cartProxyModel.index(row, column),--num);
+            ui->total_price_label->setText(QString::number(total_price-cartProxyModel.data(cartProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
+            return;
+        }
+        int row = ui->products_listView->currentIndex().row();
 
         int num = productsProxyModel.data(productsProxyModel.index(row, column),Qt::EditRole).toInt();
         if(!num)return;
 
         productsProxyModel.setData(productsProxyModel.index(row, column),--num);
 
-        int amount = ui->amount_label->text().toInt();
-        double total_price = ui->total_price_label->text().toDouble();
-        if(amount>1){
-            ui->amount_label->setText(QString::number(--amount));
-            ui->total_price_label->setText(QString::number(total_price-productsProxyModel.data(productsProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
-        }
-        else {
-            on_clear_but_clicked();
-        }
+        ui->total_price_label->setText(QString::number(total_price-productsProxyModel.data(productsProxyModel.index(row, productsModel.fieldIndex("price")),Qt::EditRole).toDouble()));
+
         cartProxyModel.invalidate();
         ui->cart_table->reset();
     });
@@ -160,7 +188,9 @@ void SalesForm::on_make_order_but_clicked()
     }
 
     QSqlQuery query;
-    if(!query.exec(QString("SELECT active_bracers.id, deposit_id, cash FROM (active_bracers INNER JOIN deposit ON deposit_id=deposit.id) WHERE code=%1 AND NOT ISNULL(enter_time);").arg(code))){
+    if(!query.exec(QString("SELECT active_bracers.id, deposit_id, cash "
+                           "FROM (active_bracers INNER JOIN deposit ON deposit_id=deposit.id) "
+                           "WHERE code=%1 AND NOT ISNULL(enter_time);").arg(code))){
         bDb.debugQuery(query);
         return;
     }
@@ -173,24 +203,29 @@ void SalesForm::on_make_order_but_clicked()
     }
 
     double total=0;
-    QString queryString = "INSERT INTO active_transactions (product_id, total_price, time, active_bracers_id) VALUES";
+    QString queryString = "INSERT INTO active_transactions (product_id, quantity, total_price, time, active_bracers_id, reception) VALUES";
     for(int i=0; i<n; i++){
-        double total_price = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("amount")),Qt::EditRole).toInt()
-                *cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("price")),Qt::EditRole).toDouble();
+        int quantity = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("amount")),Qt::EditRole).toInt();
+        double total_price = quantity*cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("price")),Qt::EditRole).toDouble();
         QString product_id = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("id")),Qt::EditRole).toString();
-        queryString.append(QString(" (%1,%2,SYSDATE(),%3),").arg(product_id).arg(total_price).arg(query.value("id").toString()));
+        queryString.append(QString(" (%1,%2,%3,SYSDATE(),%4,%5),")
+                           .arg(product_id)
+                           .arg(quantity)
+                           .arg(total_price)
+                           .arg(query.value("id").toString())
+                           .arg(bSetings.sellingPointSettings().sellingPointNumber));
         total+=total_price;
     }
     queryString.chop(1);
     queryString.append("; ");
 
-    qDebug()<<queryString;
+    //    qDebug()<<queryString;
     double cash = query.value("cash").toDouble();
-    if(total>cash){
-        QMessageBox::warning(this, "Неожиданная ситуация",
-                             QString("Недостаточно средств!"));
-        return;
-    }
+    //    if(total>cash){
+    //        QMessageBox::warning(this, "Неожиданная ситуация",
+    //                             QString("Недостаточно средств!"));
+    //        return;
+    //    }
 
     if(!query.exec(QString("CALL make_payment('%1','%2')")
                    .arg(QString("UPDATE deposit SET cash=%1 WHERE id=%2;")

@@ -5,6 +5,8 @@
 #include "DatabaseManager.h"
 #include <QSqlTableModel>
 
+#include "dialogs/SettingsDialog.h"
+
 #include "models/ProductsProxyModel.h"
 #include "models/ProductTypesProxyModel.h"
 #include "models/CartProxyModel.h"
@@ -18,7 +20,7 @@ class SalesForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit SalesForm(QWidget *parent = 0);
+    explicit SalesForm(SettingsDialog &set, QWidget *parent = 0);
     ~SalesForm();
 
 private slots:
@@ -38,6 +40,7 @@ private slots:
 private:
     Ui::SalesForm *ui;
     DatabaseManager &bDb;
+    SettingsDialog &bSetings;
 
     QSqlTableModel typesModel, productsModel;
 

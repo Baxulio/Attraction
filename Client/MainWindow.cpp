@@ -284,7 +284,7 @@ void MainWindow::initActionsConnections()
                 return;
             }
         }
-        SalesForm *salesForm = new SalesForm(this);
+        SalesForm *salesForm = new SalesForm(*bSettings, this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(salesForm));
         connect(salesForm, &SalesForm::back, [this, salesForm](){
             if(bStackedWidget->count()<2)return;

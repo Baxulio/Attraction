@@ -35,11 +35,11 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
 void TransactionsFrame::computeTransactions(const int &id, const bool &active)
 {
     QString queryString =
-            active?QString("SELECT active_transactions.title as Действие, products.title AS Продукт, active_transactions.quantity as Количество, active_transactions.time as Время, active_transactions.total_price as Цена "
+            active?QString("SELECT active_transactions.title as Действие, products.title AS Продукт, active_transactions.quantity as Количество, active_transactions.time as Время, active_transactions.total_price as Сумма "
                            "FROM active_transactions "
                            "LEFT JOIN products ON active_transactions.product_id=products.id "
                            "WHERE active_transactions.active_bracers_id=%1;").arg(id)
-                 :QString("SELECT transactions_history.title as Действие, products.title AS Продукт, transactions_history.quantity as Количество, transactions_history.time as Время, transactions_history.total_price as Цена "
+                 :QString("SELECT transactions_history.title as Действие, products.title AS Продукт, transactions_history.quantity as Количество, transactions_history.time as Время, transactions_history.total_price as Сумма "
                           "FROM transactions_history "
                           "LEFT JOIN products ON transactions_history.product_id=products.id "
                           "WHERE transactions_history.bracers_history_id=%1;").arg(id);
@@ -58,7 +58,7 @@ void TransactionsFrame::computeTransactions(const int &id, const bool &active)
 
     for(int i=0; i<rows; i++){
         rec = transactionModel.record(i);
-        temp+=rec.value("Цена").toDouble();
+        temp+=rec.value("Сумма").toDouble();
     }
     ui->total_transaction_label->setText(QString::number(temp, 'f', 2));
 }
