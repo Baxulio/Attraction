@@ -30,11 +30,16 @@ CREATE TABLE IF NOT EXISTS `active_bracers` (
   PRIMARY KEY (`id`),
   KEY `FK_active_bracers_deposit` (`deposit_id`),
   CONSTRAINT `FK_active_bracers_deposit` FOREIGN KEY (`deposit_id`) REFERENCES `deposit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.active_bracers: ~0 rows (approximately)
+-- Dumping data for table attraction.active_bracers: ~3 rows (approximately)
 DELETE FROM `active_bracers`;
 /*!40000 ALTER TABLE `active_bracers` DISABLE KEYS */;
+INSERT INTO `active_bracers` (`id`, `code`, `bracer_number`, `enter_time`, `enter_number`, `childs`, `deposit_id`, `expected_exit_time`, `entered_childs`) VALUES
+	(1, 14371684, 1, NULL, 1, 0, 8, NULL, 0),
+	(2, 14508180, 2, NULL, NULL, 0, 9, NULL, 0),
+	(3, 13207180, 3, '2018-07-04 23:01:50', 2, 0, 10, '2018-07-05 02:01:50', 0),
+	(4, 13397412, 4, NULL, NULL, 0, 11, NULL, 0);
 /*!40000 ALTER TABLE `active_bracers` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.active_transactions
@@ -52,11 +57,16 @@ CREATE TABLE IF NOT EXISTS `active_transactions` (
   KEY `FK_active_transactions_products` (`product_id`),
   CONSTRAINT `FK_active_transactions_active_bracers` FOREIGN KEY (`active_bracers_id`) REFERENCES `active_bracers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_active_transactions_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.active_transactions: ~0 rows (approximately)
+-- Dumping data for table attraction.active_transactions: ~4 rows (approximately)
 DELETE FROM `active_transactions`;
 /*!40000 ALTER TABLE `active_transactions` DISABLE KEYS */;
+INSERT INTO `active_transactions` (`id`, `title`, `product_id`, `quantity`, `total_price`, `time`, `active_bracers_id`, `reception`) VALUES
+	(1, 'Регистрация', NULL, 1, 45000.00, '2018-07-04 21:17:13', 1, NULL),
+	(2, 'Регистрация', NULL, 1, 45000.00, '2018-07-04 21:17:17', 2, NULL),
+	(3, 'Регистрация', NULL, 1, 45000.00, '2018-07-04 21:17:23', 3, NULL),
+	(4, 'Регистрация', NULL, 1, 45000.00, '2018-07-04 21:17:27', 4, NULL);
 /*!40000 ALTER TABLE `active_transactions` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.bracers_history
@@ -82,11 +92,23 @@ CREATE TABLE IF NOT EXISTS `deposit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cash` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.deposit: ~0 rows (approximately)
+-- Dumping data for table attraction.deposit: ~9 rows (approximately)
 DELETE FROM `deposit`;
 /*!40000 ALTER TABLE `deposit` DISABLE KEYS */;
+INSERT INTO `deposit` (`id`, `cash`) VALUES
+	(1, -86920.00),
+	(2, 0.00),
+	(3, 0.00),
+	(4, 0.00),
+	(5, 0.00),
+	(6, 0.00),
+	(7, 0.00),
+	(8, 0.00),
+	(9, 0.00),
+	(10, 0.00),
+	(11, 0.00);
 /*!40000 ALTER TABLE `deposit` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.products
@@ -164,11 +186,19 @@ CREATE TABLE IF NOT EXISTS `staff_history` (
   PRIMARY KEY (`id`),
   KEY `FK_staff_history_staff` (`staff_id`),
   CONSTRAINT `FK_staff_history_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id_code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.staff_history: ~0 rows (approximately)
+-- Dumping data for table attraction.staff_history: ~6 rows (approximately)
 DELETE FROM `staff_history`;
 /*!40000 ALTER TABLE `staff_history` DISABLE KEYS */;
+INSERT INTO `staff_history` (`id`, `staff_id`, `enter_time`, `exit_time`) VALUES
+	(5, 3173345, '2018-07-04 23:00:54', '2018-07-04 23:01:01'),
+	(6, 3173345, '2018-07-04 23:01:06', '2018-07-04 23:01:12'),
+	(7, 3173345, '2018-07-04 23:01:23', '2018-07-04 23:01:29'),
+	(8, 3173345, '2018-07-04 23:01:36', '2018-07-04 23:03:27'),
+	(9, 3173345, '2018-07-04 23:03:41', '2018-07-04 23:20:08'),
+	(10, 3173345, '2018-07-04 23:33:14', '2018-07-04 23:33:17'),
+	(11, 3173345, '2018-07-04 23:33:22', NULL);
 /*!40000 ALTER TABLE `staff_history` ENABLE KEYS */;
 
 -- Dumping structure for table attraction.tariff
@@ -191,7 +221,7 @@ INSERT INTO `tariff` (`id`, `title`, `price`, `time_limit`) VALUES
 -- Dumping structure for table attraction.transactions_history
 CREATE TABLE IF NOT EXISTS `transactions_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` enum('Покупка','Пополнение баланса','Возврат остатка','Гашение долга','Регистрация') NOT NULL DEFAULT 'Покупка',
+  `title` enum('Покупка','Оплата','Регистрация') NOT NULL DEFAULT 'Покупка',
   `product_id` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
   `total_price` decimal(10,2) NOT NULL,
@@ -336,12 +366,14 @@ CREATE DEFINER=`root`@`%` PROCEDURE `return_debt`(
 
 
 
+
+
 )
 BEGIN
-INSERT INTO `Attraction`.`active_transactions` (`title`, `total_price`, `time`, `active_bracers_id`) 
+INSERT INTO `active_transactions` (`title`, `total_price`, `time`, `active_bracers_id`) 
 VALUES ('Оплата', b_cash, SYSDATE(), b_bracer_id);
 
-UPDATE `Attraction`.`deposit` SET `cash`='0' WHERE  `id`=b_deposit_id;
+UPDATE `deposit` SET `cash`='0' WHERE  `id`=b_deposit_id;
 
 END//
 DELIMITER ;
