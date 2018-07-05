@@ -3,6 +3,10 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QTextDocument>
+#include <QTextStream>
 
 TransactionsFrame::TransactionsFrame(QWidget *parent) :
     QFrame(parent),
@@ -61,4 +65,48 @@ void TransactionsFrame::computeTransactions(const int &id, const bool &active)
         temp+=rec.value("Сумма").toDouble();
     }
     ui->total_transaction_label->setText(QString::number(temp, 'f', 2));
+}
+
+void TransactionsFrame::on_print_but_clicked()
+{
+//    QString strStream;
+//    QTextStream out(&strStream);
+
+//    const int rowCount = ui->tableView->model()->rowCount();
+//    const int columnCount = ui->tableView->model()->columnCount();
+
+//    out <<  QString("<html><head><meta Content=\"Text/html; charset=Windows-1251\"></head><body>"
+//                    "<p align=center>--- OASIS ---<br>"
+//                    "<p>Браслет №: %1<br>"
+//                    "Количество детей: %2<br>"
+//                    "Вход: 04.07.2018 / 12:10:47 [1]<br>"
+//                    "Время пребывания: %6<br>"
+//                    "Сверх лимит: %7<br>"
+//                    "Оплачиваемая сумма: %8"
+//                    "Транзакции:<br>"
+//                    "<ol>").arg()
+
+
+//    // data table
+//    for (int row = 0; row < rowCount; row++) {
+//        out << "<tr>";
+//        for (int column = 0; column < columnCount; column++) {
+//            if (!ui->tableView->isColumnHidden(column)) {
+//                QString data = ui->tableView->model()->data(ui->tableView->model()->index(row, column)).toString().simplified();
+//                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
+//            }
+//        }
+//        out << "</tr>\n";
+//    }
+//    out <<  "</table>\n"
+//            "</body>\n"
+//            "</html>\n";
+
+//    QTextDocument document;
+//    document.setHtml(strStream);
+//    QPrinter bPrinter;
+//    QPrintDialog dialog(&bPrinter, NULL);
+//    if (dialog.exec() == QDialog::Accepted) {
+//        document.print(&bPrinter);
+//    }
 }

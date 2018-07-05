@@ -23,6 +23,9 @@ public:
     void setHeaderData(const QSqlRecord &record, const bool &active);
     void computeTransactions(const int &id, const bool &active);
 
+private slots:
+    void on_print_but_clicked();
+
 private:
     Ui::TransactionsFrame *ui;
     DatabaseManager &bDb;

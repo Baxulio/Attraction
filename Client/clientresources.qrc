@@ -88,5 +88,6 @@
         <file>resources/logo.png</file>
         <file>resources/cart.png</file>
         <file>resources/store.png</file>
+        <file>resources/glyphs/icon_print.png</file>
     </qresource>
 </RCC>
