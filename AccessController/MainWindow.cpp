@@ -20,7 +20,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    if(bSettings->modeSettings().mode and !server->listen(QHostAddress::AnyIPv4, 1234))
+    connect(&bTimer, &QTimer::timeout, this, &MainWindow::timeout);
+
+    readSettings();
+    initActionsConnections();
+
+    if(!bSettings->modeSettings().mode and !server->listen(QHostAddress::AnyIPv4, 1234))
         close();
 
     connect(server, &QTcpServer::newConnection, [this]{
@@ -38,11 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
         });
         connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
     });
-
-    connect(&bTimer, &QTimer::timeout, this, &MainWindow::timeout);
-
-    readSettings();
-    initActionsConnections();
 
     connect(&bDb,&DatabaseManager::connectionChanged, [this](const bool status){
         if(status){
@@ -170,12 +170,13 @@ bool MainWindow::enter(quint32 code)
     if(query.isValid()){
         enterRec=query.record();
 
-        if(!query.exec(QString("SELECT staff_id FROM staff_history WHERE staff_id = %1 AND DATE(enter_time)=DATE(SYSDATE());").arg(code))){
+        if(!query.exec(QString("SELECT staff_id FROM staff_history WHERE staff_id = %1 AND ISNULL(exit_time) AND DATE(enter_time)=DATE(SYSDATE());").arg(code))){
             bDb.debugQuery(query);
             return false;
         }
 
         query.next();
+
         if(query.isValid())return false;
 
         return true;
@@ -210,7 +211,7 @@ bool MainWindow::enter(quint32 code)
 bool MainWindow::exit(quint32 code)
 {
     QSqlQuery query;
-    if(!query.exec(QString("SELECT id FROM staff_history WHERE staff_id=%1 AND DATE(enter_time)=DATE(SYSDATE());").arg(code))){
+    if(!query.exec(QString("SELECT id FROM staff_history WHERE staff_id=%1 AND ISNULL(exit_time) AND DATE(enter_time)=DATE(SYSDATE());").arg(code))){
         bDb.debugQuery(query);
         return false;
     }
