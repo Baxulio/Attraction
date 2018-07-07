@@ -37,6 +37,10 @@ private slots:
 
     void on_make_order_but_clicked();
 
+    void on_grid_view_but_clicked();
+
+    void on_list_view_but_clicked();
+
 private:
     Ui::SalesForm *ui;
     DatabaseManager &bDb;

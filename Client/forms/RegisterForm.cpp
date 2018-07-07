@@ -9,17 +9,26 @@
 #include "dialogs/WieagandReaderDialog.h"
 #include <QDebug>
 
-RegisterForm::RegisterForm(QWidget *parent) :
+RegisterForm::RegisterForm(SettingsDialog &set, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::RegisterForm),
-    bDb(DatabaseManager::instance())
+    bDb(DatabaseManager::instance()),
+    bSetings(set)
 {
     ui->setupUi(this);
+
+    connect(&bDb, &DatabaseManager::refresh, this, &RegisterForm::on_refresh);
 }
 
 RegisterForm::~RegisterForm()
 {
     delete ui;
+}
+
+void RegisterForm::on_refresh()
+{
+    if(!this->isVisible())return;
+    ui->cash_doubleSpinBox->setMaximum(bDb.tariffModel->record(0).value("price_limit").toDouble());
 }
 
 void RegisterForm::on_back_pushButton_clicked()
@@ -46,7 +55,7 @@ void RegisterForm::on_register_bracer_but_clicked()
     }
 
     QSqlQuery query;
-    if(!query.exec(QString("SELECT * FROM `Attraction`.`active_bracers` WHERE code=%1").arg(code))){
+    if(!query.exec(QString("SELECT * FROM active_bracers WHERE code=%1").arg(code))){
         bDb.debugQuery(query);
         return;
     }
@@ -62,10 +71,13 @@ void RegisterForm::on_register_bracer_but_clicked()
                              .arg(query.value("enter_number").toInt()));
         return;
     }
-    if(!query.exec(QString("CALL `register`('%1', '%2', '%3');")
+    if(!query.exec(QString("CALL `register`('%1', '%2', '%3','%4','%5','%6');")
                    .arg(ui->childs_spinBox->value())
                    .arg(ui->bracer_number_spinBox->value())
-                   .arg(code)))
+                   .arg(code)
+                   .arg(ui->cash_doubleSpinBox->value())
+                   .arg(ui->comment_textEdit->toPlainText())
+                   .arg(bSetings.activityPointSettings().activityPointNumber)))
         bDb.debugQuery(query);
 
     QMessageBox::information(this, "Успех",
@@ -81,7 +93,7 @@ void RegisterForm::on_drop_bracer_but_clicked()
     quint32 code=dialog.getCode();
 
     QSqlQuery query;
-    if(!query.exec(QString("SELECT * FROM `Attraction`.`active_bracers` WHERE code=%1").arg(code))){
+    if(!query.exec(QString("SELECT * FROM active_bracers WHERE code=%1").arg(code))){
         bDb.debugQuery(query);
         return;
     }
@@ -91,16 +103,21 @@ void RegisterForm::on_drop_bracer_but_clicked()
                              QString("Браслет не зарегистрирован!"));
         return;
     }
+    if(!query.value("enter_time").isNull()){
+        QMessageBox::warning(this, "Неожиданная ситуация",
+                             QString("Данная операция невозможна: браслет уже зафиксирован при входе!"));
+        return;
+    }
     if(QMessageBox::question(this, "Вопрос",
-                             QString("Вы действительно хотите удалить данный браслет?"))
+                             QString("Вы действительно хотите сбросить данный браслет?"))
             !=QMessageBox::Yes)return;
 
-    if(!query.exec(QString("DELETE FROM `Attraction`.`active_bracers` WHERE  `code`=%1;")
+    if(!query.exec(QString("DELETE FROM active_bracers WHERE  `code`=%1;")
                    .arg(code)))
         bDb.debugQuery(query);
 
     QMessageBox::information(this, "Успех",
-                             QString("<font color='green'>Успешно удален!"));
+                             QString("<font color='green'>Успешно!"));
 }
 
 void RegisterForm::on_bracer_number_spinBox_valueChanged(int arg1)

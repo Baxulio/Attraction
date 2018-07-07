@@ -23,8 +23,8 @@ public:
         quint32 port;
     };
 
-    struct SellingPointSettings{
-        quint8 sellingPointNumber;
+    struct ActivityPointSettings{
+        quint8 activityPointNumber;
     };
 
     explicit SettingsDialog(QWidget *parent = nullptr);
@@ -36,14 +36,14 @@ public:
     BareerSettings bareerSettings() const {return bBareerSettings;}
     void setBareerSettings(const BareerSettings bareer);
 
-    SellingPointSettings sellingPointSettings() const {return bSellingPointSettings;}
-    void setSellingPointSettings(const SellingPointSettings point);
+    ActivityPointSettings activityPointSettings() const {return bActivityPointSettings;}
+    void setActivityPointSettings(const ActivityPointSettings point);
 
 private:
     Ui::SettingsDialog *ui = nullptr;
     ServerSettings bServerSettings;
     BareerSettings bBareerSettings;
-    SellingPointSettings bSellingPointSettings;
+    ActivityPointSettings bActivityPointSettings;
 
 private slots:
     void apply();

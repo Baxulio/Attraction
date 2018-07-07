@@ -36,10 +36,10 @@ void SettingsDialog::setBareerSettings(const SettingsDialog::BareerSettings bare
     ui->bareer_port_spin->setValue(bBareerSettings.port);
 }
 
-void SettingsDialog::setSellingPointSettings(const SettingsDialog::SellingPointSettings point)
+void SettingsDialog::setActivityPointSettings(const SettingsDialog::ActivityPointSettings point)
 {
-    bSellingPointSettings = point;
-    ui->selling_ponit_edit->setValue(bSellingPointSettings.sellingPointNumber);
+    bActivityPointSettings = point;
+    ui->activity_ponit_edit->setValue(bActivityPointSettings.activityPointNumber);
 }
 
 void SettingsDialog::updateSettings()
@@ -52,5 +52,5 @@ void SettingsDialog::updateSettings()
     bBareerSettings.host = ui->bareer_hostname_edit->text();
     bBareerSettings.port = ui->bareer_port_spin->value();
 
-    bSellingPointSettings.sellingPointNumber = ui->selling_ponit_edit->value();
+    bActivityPointSettings.activityPointNumber = ui->activity_ponit_edit->value();
 }

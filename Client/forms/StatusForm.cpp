@@ -35,8 +35,14 @@ bool StatusForm::retrieve_info(const quint32 &code)
     query.next();
 
     if(!query.isValid()){
+        ui->add_ballance_but->setEnabled(false);
+        ui->pay_but->setEnabled(false);
+        ui->return_money_but->setEnabled(false);
+        ui->allow_but->setEnabled(false);
+
         QMessageBox::warning(this, "Неожиданная ситуация",
                              QString("Карта не зарегистрирована!"));
+
         return false;
     }
     currentRecord = query.record();
@@ -44,10 +50,24 @@ bool StatusForm::retrieve_info(const quint32 &code)
     transactionsFrame->transactionModel.clear();
     transactionsFrame->setHeaderData(currentRecord,true);
 
-    double ballance = currentRecord.value("cash").toDouble();
-    ballance<0?ui->return_debt_but->setEnabled(true):
-               ui->return_debt_but->setEnabled(false);
+    ui->add_ballance_but->setEnabled(true);
 
+    double ballance = currentRecord.value("cash").toDouble();
+    if(ballance==0){
+        ui->pay_but->setEnabled(false);
+        ui->return_money_but->setEnabled(false);
+        ui->allow_but->setEnabled(true);
+    }
+    else if(ballance<0){
+        ui->pay_but->setEnabled(true);
+        ui->return_money_but->setEnabled(false);
+        ui->allow_but->setEnabled(false);
+    }
+    else {
+        ui->pay_but->setEnabled(false);
+        ui->return_money_but->setEnabled(true);
+        ui->allow_but->setEnabled(false);
+    }
     return true;
 }
 
@@ -66,37 +86,16 @@ void StatusForm::on_retrieve_info_but_clicked()
         transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
 }
 
-void StatusForm::on_return_debt_but_clicked()
+void StatusForm::on_allow_but_clicked()
 {
     WieagandReaderDialog dialog(this);
     if(dialog.exec() != QDialog::Accepted){
         return;
     }
     quint32 code = dialog.getCode();
-
-    if(!retrieve_info(code))
+    if(!retrieve_info(code) or !ui->allow_but->isEnabled())
         return;
 
-    if (QMessageBox::question(this, "Появился вопрос",
-                              QString("Оплачиваемая сумма: %1\nВы точно хотите сделать это?").arg(currentRecord.value("cash").toDouble()))
-            !=QMessageBox::Yes)
-        return;
-
-    QSqlQuery query;
-    if(!query.exec(QString("CALL `return_debt`(%1, %2, %3);")
-                   .arg(currentRecord.value("deposit_id").toInt())
-                   .arg(currentRecord.value("id").toInt())
-                   .arg(currentRecord.value("cash").toDouble()))){
-        bDb.debugQuery(query);
-        return;
-    }
-
-    if(retrieve_info(code))
-        transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
-}
-
-void StatusForm::on_allow_but_clicked()
-{
     QTcpSocket *socket = new QTcpSocket(this);
     socket->connectToHost(bSetings.bareerSettings().host, bSetings.bareerSettings().port);
     if(!socket->waitForConnected(3000)){
@@ -107,8 +106,108 @@ void StatusForm::on_allow_but_clicked()
 
     /////here is code for opening gate
     ///
-    socket->write("kuwoy");
+    QByteArray ar;
+    QDataStream os(&ar);
+    os.setVersion(QDataStream::Qt_5_5);
+
+    os<<code;
+
+    socket->write(ar);
     socket->deleteLater();
     ///
     ///
+}
+
+void StatusForm::on_add_ballance_but_clicked()
+{
+    if(ui->cash_doubleSpinBox->value()<=0){
+        ui->cash_doubleSpinBox->setFocus();
+        return;
+    }
+
+    WieagandReaderDialog dialog(this);
+    if(dialog.exec() != QDialog::Accepted){
+        return;
+    }
+    quint32 code = dialog.getCode();
+    if(!retrieve_info(code) or !ui->add_ballance_but->isEnabled())
+        return;
+
+    if (QMessageBox::question(this, "Появился вопрос",
+                              QString("Пополняемая сумма: %1\nВы точно хотите сделать это?").arg(ui->cash_doubleSpinBox->value()))
+            !=QMessageBox::Yes)
+        return;
+
+    QSqlQuery query;
+    if(!query.exec(QString("CALL `add_cash`(%1, %2, %3, %4);")
+                   .arg(ui->cash_doubleSpinBox->value())
+                   .arg(currentRecord.value("id").toInt())
+                   .arg(currentRecord.value("deposit_id").toInt())
+                   .arg(bSetings.activityPointSettings().activityPointNumber))){
+        bDb.debugQuery(query);
+        return;
+    }
+    if(retrieve_info(code))
+        transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
+    ui->cash_doubleSpinBox->clear();
+}
+
+void StatusForm::on_pay_but_clicked()
+{
+    WieagandReaderDialog dialog(this);
+    if(dialog.exec() != QDialog::Accepted){
+        return;
+    }
+    quint32 code = dialog.getCode();
+
+    if(!retrieve_info(code) or !ui->pay_but->isEnabled())
+        return;
+
+    if (QMessageBox::question(this, "Появился вопрос",
+                              QString("Оплачиваемая сумма: %1\nВы точно хотите сделать это?").arg(currentRecord.value("cash").toDouble()))
+            !=QMessageBox::Yes)
+        return;
+
+    QSqlQuery query;
+    if(!query.exec(QString("CALL `return_debt`(%1, %2, %3, %4);")
+                   .arg(currentRecord.value("deposit_id").toInt())
+                   .arg(currentRecord.value("id").toInt())
+                   .arg(currentRecord.value("cash").toDouble())
+                   .arg(bSetings.activityPointSettings().activityPointNumber))){
+        bDb.debugQuery(query);
+        return;
+    }
+
+    if(retrieve_info(code))
+        transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
+}
+
+void StatusForm::on_return_money_but_clicked()
+{
+    WieagandReaderDialog dialog(this);
+    if(dialog.exec() != QDialog::Accepted){
+        return;
+    }
+    quint32 code = dialog.getCode();
+
+    if(!retrieve_info(code) or !ui->return_money_but->isEnabled())
+        return;
+
+    if (QMessageBox::question(this, "Появился вопрос",
+                              QString("Возвращаемая сумма: %1\nВы точно хотите сделать это?").arg(currentRecord.value("cash").toDouble()))
+            !=QMessageBox::Yes)
+        return;
+
+    QSqlQuery query;
+    if(!query.exec(QString("CALL `return_remainder`(%1, %2, %3, %4);")
+                   .arg(currentRecord.value("deposit_id").toInt())
+                   .arg(currentRecord.value("id").toInt())
+                   .arg(currentRecord.value("cash").toDouble())
+                   .arg(bSetings.activityPointSettings().activityPointNumber))){
+        bDb.debugQuery(query);
+        return;
+    }
+    if(retrieve_info(code))
+        transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
+
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>562</height>
+    <width>509</width>
+    <height>571</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset>
+        <iconset resource="../clientresources.qrc">
          <normaloff>:/resources/glyphs/15.png</normaloff>:/resources/glyphs/15.png</iconset>
        </property>
        <property name="flat">
@@ -65,6 +65,9 @@
        </property>
        <property name="text">
         <string>РЕГИСТРАЦИЯ</string>
+       </property>
+       <property name="buddy">
+        <cstring>register_bracer_but</cstring>
        </property>
       </widget>
      </item>
@@ -134,7 +137,7 @@
        <item>
         <widget class="QLabel" name="label_3">
          <property name="pixmap">
-          <pixmap>:/resources/glyphs/13.png</pixmap>
+          <pixmap resource="../clientresources.qrc">:/resources/glyphs/13.png</pixmap>
          </property>
         </widget>
        </item>
@@ -154,13 +157,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="label_5">
          <property name="font">
@@ -169,26 +166,23 @@
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Данная панель предназначена для регистрации браслетов. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Необходимо заполнить все приведенные ниже поля!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Данная панель предназначена для регистрации браслетов. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#969696;&quot;&gt;Необходимо заполнить все поля с &lt;/span&gt;&lt;span style=&quot; text-decoration: underline; color:#ffaa00;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; color:#969696;&quot;&gt;!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>false</bool>
+         </property>
+         <property name="buddy">
+          <cstring>register_bracer_but</cstring>
          </property>
         </widget>
        </item>
        <item>
         <layout class="QFormLayout" name="formLayout">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-         <property name="fieldGrowthPolicy">
-          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-         </property>
          <property name="horizontalSpacing">
           <number>5</number>
          </property>
          <property name="verticalSpacing">
-          <number>10</number>
+          <number>5</number>
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
@@ -198,7 +192,10 @@
             </font>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Номер браслета: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;*&lt;/span&gt;Номер браслета: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="buddy">
+            <cstring>bracer_number_spinBox</cstring>
            </property>
           </widget>
          </item>
@@ -238,6 +235,9 @@
            </property>
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Количество детей: &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="buddy">
+            <cstring>childs_spinBox</cstring>
            </property>
           </widget>
          </item>
@@ -314,6 +314,72 @@
            </item>
           </layout>
          </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_28">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Дополнительный кэш:</string>
+           </property>
+           <property name="buddy">
+            <cstring>cash_doubleSpinBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="cash_doubleSpinBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::PlusMinus</enum>
+           </property>
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <double>10000000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>500.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_29">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Примечание к браслету:</string>
+           </property>
+           <property name="buddy">
+            <cstring>comment_textEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QTextEdit" name="comment_textEdit"/>
+         </item>
         </layout>
        </item>
        <item>
@@ -335,16 +401,50 @@
             <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
            </property>
            <property name="text">
             <string>Зарегистрировать браслет</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="register_bracer_but_2">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton{
+    border: none; /* no border for a flat push button */
+}
+
+QPushButton:hover{
+	text-decoration: underline;
+}</string>
+           </property>
+           <property name="text">
+            <string>Сбросить поля</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../clientresources.qrc">
+             <normaloff>:/resources/glyphs/51.png</normaloff>:/resources/glyphs/51.png</iconset>
            </property>
           </widget>
          </item>
@@ -389,6 +489,9 @@ QAbstractButton:hover{
        </property>
        <property name="text">
         <string>СБРОС</string>
+       </property>
+       <property name="buddy">
+        <cstring>drop_bracer_but</cstring>
        </property>
       </widget>
      </item>
@@ -458,7 +561,7 @@ QAbstractButton:hover{
        <item>
         <widget class="QLabel" name="label_7">
          <property name="pixmap">
-          <pixmap>:/resources/glyphs/51.png</pixmap>
+          <pixmap resource="../clientresources.qrc">:/resources/glyphs/51.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>false</bool>
@@ -498,6 +601,9 @@ QAbstractButton:hover{
          <property name="wordWrap">
           <bool>true</bool>
          </property>
+         <property name="buddy">
+          <cstring>drop_bracer_but</cstring>
+         </property>
         </widget>
        </item>
        <item>
@@ -519,12 +625,15 @@ QAbstractButton:hover{
             <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
            </property>
            <property name="text">
@@ -566,6 +675,83 @@ QAbstractButton:hover{
    </item>
   </layout>
  </widget>
- <resources/>
- <connections/>
+ <tabstops>
+  <tabstop>back_pushButton</tabstop>
+  <tabstop>bracer_number_spinBox</tabstop>
+  <tabstop>childs_spinBox</tabstop>
+  <tabstop>cash_doubleSpinBox</tabstop>
+  <tabstop>comment_textEdit</tabstop>
+  <tabstop>register_bracer_but</tabstop>
+  <tabstop>register_bracer_but_2</tabstop>
+  <tabstop>drop_bracer_but</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../clientresources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>register_bracer_but_2</sender>
+   <signal>clicked()</signal>
+   <receiver>bracer_number_spinBox</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>323</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>register_bracer_but_2</sender>
+   <signal>clicked()</signal>
+   <receiver>childs_spinBox</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>386</x>
+     <y>313</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>172</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>register_bracer_but_2</sender>
+   <signal>clicked()</signal>
+   <receiver>cash_doubleSpinBox</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>312</x>
+     <y>322</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>431</x>
+     <y>220</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>register_bracer_but_2</sender>
+   <signal>clicked()</signal>
+   <receiver>comment_textEdit</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>295</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>313</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

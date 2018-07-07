@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="server_tab">
       <attribute name="title">
@@ -202,7 +202,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QSpinBox" name="selling_ponit_edit">
+        <widget class="QSpinBox" name="activity_ponit_edit">
          <property name="minimum">
           <number>1</number>
          </property>

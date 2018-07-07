@@ -360,12 +360,15 @@
             <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
            </property>
            <property name="text">
@@ -375,32 +378,29 @@ QAbstractButton:hover{
          </item>
          <item>
           <widget class="QPushButton" name="types_revert_but">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>40</height>
-            </size>
-           </property>
            <property name="font">
             <font>
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
-            <string notr="true">QAbstractButton{
-color: rgb(255, 255, 255);
-border:none;
-background-color: rgb(150, 150, 150);
-
+            <string notr="true">QPushButton{
+    border: none; /* no border for a flat push button */
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-background-color: rgb(150, 150, 150, 50%);
 
+QPushButton:hover{
+	text-decoration: underline;
 }</string>
            </property>
            <property name="text">
             <string>Откатить</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../clientresources.qrc">
+             <normaloff>:/resources/glyphs/51.png</normaloff>:/resources/glyphs/51.png</iconset>
            </property>
           </widget>
          </item>
@@ -725,12 +725,15 @@ background-color: rgb(150, 150, 150, 50%);
             <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
            </property>
            <property name="text">
@@ -740,32 +743,29 @@ QAbstractButton:hover{
          </item>
          <item>
           <widget class="QPushButton" name="product_revert_but">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>40</height>
-            </size>
-           </property>
            <property name="font">
             <font>
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
            <property name="styleSheet">
-            <string notr="true">QAbstractButton{
-color: rgb(255, 255, 255);
-border:none;
-background-color: rgb(150, 150, 150);
-
+            <string notr="true">QPushButton{
+    border: none; /* no border for a flat push button */
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-background-color: rgb(150, 150, 150, 50%);
 
+QPushButton:hover{
+	text-decoration: underline;
 }</string>
            </property>
            <property name="text">
             <string>Откатить</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../clientresources.qrc">
+             <normaloff>:/resources/glyphs/51.png</normaloff>:/resources/glyphs/51.png</iconset>
            </property>
           </widget>
          </item>

@@ -970,12 +970,15 @@ QPushButton:hover{
                 <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
                </property>
                <property name="text">

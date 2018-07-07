@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
-    <height>622</height>
+    <width>752</width>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -343,6 +343,9 @@
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <property name="spacing">
+          <number>20</number>
+         </property>
          <item>
           <widget class="QPushButton" name="staff_submit">
            <property name="minimumSize">
@@ -360,12 +363,15 @@
             <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
            </property>
            <property name="text">
@@ -377,30 +383,31 @@ QAbstractButton:hover{
           <widget class="QPushButton" name="staff_revert">
            <property name="minimumSize">
             <size>
-             <width>200</width>
-             <height>40</height>
+             <width>0</width>
+             <height>25</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="styleSheet">
-            <string notr="true">QAbstractButton{
-color: rgb(255, 255, 255);
-border:none;
-background-color: rgb(150, 150, 150);
-
+            <string notr="true">QPushButton{
+    border: none; /* no border for a flat push button */
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-background-color: rgb(150, 150, 150, 50%);
 
+QPushButton:hover{
+	text-decoration: underline;
 }</string>
            </property>
            <property name="text">
             <string>Откатить</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../clientresources.qrc">
+             <normaloff>:/resources/glyphs/51.png</normaloff>:/resources/glyphs/51.png</iconset>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -671,6 +678,9 @@ background-color: rgb(150, 150, 150, 50%);
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <property name="spacing">
+          <number>20</number>
+         </property>
          <item>
           <widget class="QPushButton" name="tariffs_submit">
            <property name="minimumSize">
@@ -688,12 +698,15 @@ background-color: rgb(150, 150, 150, 50%);
             <string notr="true">QAbstractButton{
 color: rgb(255, 255, 255);
 border:none;
-	background-color: rgb(0, 187, 255);
+background-color: rgb(100, 100, 100);
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-	background-color: rgb(0, 187, 255, 50%);
+QAbstractButton:enabled:hover{
 
+	background-color: rgb(0, 187, 255,50%);
+
+}
+QAbstractButton:enabled{
+	background-color: rgb(0, 187, 255);
 }</string>
            </property>
            <property name="text">
@@ -705,30 +718,31 @@ QAbstractButton:hover{
           <widget class="QPushButton" name="tariffs_revert">
            <property name="minimumSize">
             <size>
-             <width>200</width>
-             <height>40</height>
+             <width>0</width>
+             <height>25</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
            </property>
            <property name="styleSheet">
-            <string notr="true">QAbstractButton{
-color: rgb(255, 255, 255);
-border:none;
-background-color: rgb(150, 150, 150);
-
+            <string notr="true">QPushButton{
+    border: none; /* no border for a flat push button */
 }
-QAbstractButton:hover{
-/*background-color: rgb(255, 170, 0);*/
-background-color: rgb(150, 150, 150, 50%);
 
+QPushButton:hover{
+	text-decoration: underline;
 }</string>
            </property>
            <property name="text">
             <string>Откатить</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../clientresources.qrc">
+             <normaloff>:/resources/glyphs/51.png</normaloff>:/resources/glyphs/51.png</iconset>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

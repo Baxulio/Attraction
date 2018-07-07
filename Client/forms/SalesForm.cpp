@@ -121,6 +121,7 @@ void SalesForm::on_refresh()
     ui->types_listView->setModelColumn(typesModel.fieldIndex("title"));
 
     productsModel.setTable("products");
+    productsModel.setSort(productsModel.fieldIndex("title"),Qt::AscendingOrder);
     if(!productsModel.select()){
         bDb.debugError(productsModel.lastError());
         return ;
@@ -213,7 +214,7 @@ void SalesForm::on_make_order_but_clicked()
                            .arg(quantity)
                            .arg(total_price)
                            .arg(query.value("id").toString())
-                           .arg(bSetings.sellingPointSettings().sellingPointNumber));
+                           .arg(bSetings.activityPointSettings().activityPointNumber));
         total+=total_price;
     }
     queryString.chop(1);
@@ -239,4 +240,16 @@ void SalesForm::on_make_order_but_clicked()
     }
     QMessageBox::information(this, "Успех",
                              QString("<font color='green'>Успешно!"));
+}
+
+void SalesForm::on_grid_view_but_clicked()
+{
+    ui->products_listView->setViewMode(QListView::IconMode);
+    ui->products_listView->setFlow(QListView::LeftToRight);
+}
+
+void SalesForm::on_list_view_but_clicked()
+{
+    ui->products_listView->setViewMode(QListView::ListMode);
+    ui->products_listView->setFlow(QListView::TopToBottom);
 }

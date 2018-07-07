@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>994</width>
-    <height>578</height>
+    <width>685</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <number>10</number>
    </property>
    <property name="leftMargin">
-    <number>20</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
     <number>20</number>
@@ -124,12 +124,6 @@
       <number>2</number>
      </property>
      <widget class="QFrame" name="frame_4">
-      <property name="maximumSize">
-       <size>
-        <width>250</width>
-        <height>16777215</height>
-       </size>
-      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -144,7 +138,7 @@
         <number>10</number>
        </property>
        <property name="leftMargin">
-        <number>0</number>
+        <number>30</number>
        </property>
        <property name="topMargin">
         <number>0</number>
@@ -212,6 +206,9 @@
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
            </property>
            <property name="iconSize">
             <size>
@@ -294,7 +291,7 @@
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,1,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,0,0,0">
              <property name="spacing">
               <number>5</number>
              </property>
@@ -317,19 +314,6 @@
                 <string>НАПИТКИ</string>
                </property>
               </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
              </item>
              <item>
               <widget class="QLineEdit" name="lineEdit">
@@ -382,6 +366,64 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="grid_view_but">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../clientresources.qrc">
+                 <normaloff>:/resources/glyphs/34.png</normaloff>:/resources/glyphs/34.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="list_view_but">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../clientresources.qrc">
+                 <normaloff>:/resources/glyphs/35.png</normaloff>:/resources/glyphs/35.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -404,13 +446,13 @@
               <enum>QAbstractItemView::DragDrop</enum>
              </property>
              <property name="alternatingRowColors">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="movement">
               <enum>QListView::Snap</enum>
              </property>
              <property name="flow">
-              <enum>QListView::LeftToRight</enum>
+              <enum>QListView::TopToBottom</enum>
              </property>
              <property name="resizeMode">
               <enum>QListView::Adjust</enum>
@@ -419,7 +461,7 @@
               <number>10</number>
              </property>
              <property name="viewMode">
-              <enum>QListView::IconMode</enum>
+              <enum>QListView::ListMode</enum>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -458,12 +500,6 @@
        </layout>
       </widget>
       <widget class="QFrame" name="transactions_frame_2">
-       <property name="maximumSize">
-        <size>
-         <width>300</width>
-         <height>16777215</height>
-        </size>
-       </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
        </property>
@@ -556,11 +592,14 @@
          <widget class="QTableView" name="cart_table">
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <pointsize>16</pointsize>
            </font>
           </property>
           <property name="contextMenuPolicy">
            <enum>Qt::ActionsContextMenu</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustIgnored</enum>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -578,7 +617,7 @@
            <bool>false</bool>
           </property>
           <attribute name="horizontalHeaderVisible">
-           <bool>false</bool>
+           <bool>true</bool>
           </attribute>
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>false</bool>
@@ -667,7 +706,7 @@
               <widget class="QLabel" name="amount_label">
                <property name="font">
                 <font>
-                 <pointsize>16</pointsize>
+                 <pointsize>25</pointsize>
                 </font>
                </property>
                <property name="toolTip">
@@ -726,7 +765,7 @@
               <widget class="QLabel" name="total_price_label">
                <property name="font">
                 <font>
-                 <pointsize>16</pointsize>
+                 <pointsize>32</pointsize>
                 </font>
                </property>
                <property name="toolTip">
@@ -744,7 +783,7 @@
               <widget class="QLabel" name="label_10">
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>14</pointsize>
                 </font>
                </property>
                <property name="toolTip">
@@ -807,8 +846,18 @@ QPushButton:hover{
            </property>
            <item>
             <widget class="QPushButton" name="make_order_but">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
              <property name="cursor">
               <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(100, 100, 100);</string>
              </property>
              <property name="text">
               <string>ОФОРМИТЬ ЗАКАЗ</string>

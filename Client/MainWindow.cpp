@@ -36,11 +36,22 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->status_button->setChecked(true);
             qobject_cast<StatusForm*>(bStackedWidget->widget(n))->on_retrieve_info_but_clicked();
         }
-        else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n)))ui->products_button->setChecked(true);
+        else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n))){
+            ui->products_button->setChecked(true);
+            return;
+        }
         else if(qobject_cast<DashboardForm*>(bStackedWidget->widget(n)))ui->dashboard_but->setChecked(true);
-        else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n)))ui->additional_settings_button->setChecked(true);
+        else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n))){
+            ui->additional_settings_button->setChecked(true);
+            return;
+        }
         else if(qobject_cast<HistoryForm*>(bStackedWidget->widget(n)))ui->history_button->setChecked(true);
-        else if(qobject_cast<SalesForm*>(bStackedWidget->widget(n)))ui->sales_button->setChecked(true);
+        else if(qobject_cast<SalesForm*>(bStackedWidget->widget(n))){
+            ui->sales_button->setChecked(true);
+            return;
+        }
+
+        emit ui->autoUpdate_button->clicked();
     });
 
     connect(this, &MainWindow::showStatusMessage, [this](const QString &msg){
@@ -172,7 +183,7 @@ void MainWindow::initActionsConnections()
                 return;
             }
         }
-        RegisterForm *registerForm = new RegisterForm(this);
+        RegisterForm *registerForm = new RegisterForm(*bSettings, this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(registerForm));
         connect(registerForm, &RegisterForm::back, [this, registerForm](){
             if(bStackedWidget->count()<2)return;

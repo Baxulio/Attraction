@@ -27,12 +27,15 @@ private:
 public slots:
     void on_retrieve_info_but_clicked();
 
-private slots:
+private:
     bool retrieve_info(const quint32 &code);
-    void on_back_but_clicked();
-    void on_return_debt_but_clicked();
 
+private slots:
+    void on_back_but_clicked();
     void on_allow_but_clicked();
+    void on_add_ballance_but_clicked();
+    void on_pay_but_clicked();
+    void on_return_money_but_clicked();
 
 signals:
     void back();
