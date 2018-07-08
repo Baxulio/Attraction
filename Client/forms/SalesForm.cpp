@@ -133,6 +133,9 @@ void SalesForm::on_refresh()
     ui->cart_table->hideColumn(productsModel.fieldIndex("icon"));
     ui->cart_table->hideColumn(productsModel.fieldIndex("comment"));
     ui->cart_table->hideColumn(productsModel.fieldIndex("amount"));
+
+    cartProxyModel.setHeaderData(productsModel.fieldIndex("title"),Qt::Horizontal,"Кол-во продукта", Qt::DisplayRole);
+    cartProxyModel.setHeaderData(productsModel.fieldIndex("price"),Qt::Horizontal,"Цена", Qt::DisplayRole);
 }
 
 void SalesForm::on_back_but_clicked()
@@ -204,7 +207,7 @@ void SalesForm::on_make_order_but_clicked()
     }
 
     double total=0;
-    QString queryString = "INSERT INTO active_transactions (product_id, quantity, total_price, time, active_bracers_id, reception) VALUES";
+    QString queryString = "INSERT INTO active_transactions (product_id, quantity, total_price, time, active_bracers_id, activity_point) VALUES";
     for(int i=0; i<n; i++){
         int quantity = cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("amount")),Qt::EditRole).toInt();
         double total_price = quantity*cartProxyModel.data(cartProxyModel.index(i, productsModel.fieldIndex("price")),Qt::EditRole).toDouble();
@@ -222,11 +225,14 @@ void SalesForm::on_make_order_but_clicked()
 
     //    qDebug()<<queryString;
     double cash = query.value("cash").toDouble();
-    //    if(total>cash){
-    //        QMessageBox::warning(this, "Неожиданная ситуация",
-    //                             QString("Недостаточно средств!"));
-    //        return;
-    //    }
+    //comment here to allow negative deposit
+    //
+    if(total>cash){
+        QMessageBox::warning(this, "Неожиданная ситуация",
+                             QString("Недостаточно средств!"));
+        return;
+    }
+    //
 
     if(!query.exec(QString("CALL make_payment('%1','%2')")
                    .arg(QString("UPDATE deposit SET cash=%1 WHERE id=%2;")

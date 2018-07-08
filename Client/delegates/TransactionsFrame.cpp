@@ -30,6 +30,12 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
     ui->enter_time_label->setText(record.value("enter_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
 
     if(active){
+        ui->exit_number_label->setText(record.value("entered_childs").toString());
+        ui->exit_time_label->setText(record.value("expected_exit_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
+    }
+    else {
+        ui->exit_label->setText("Выход #");
+        ui->exit_time_label->setText("Время выхода: ");
         ui->exit_number_label->setText(record.value("exit_number").toString());
         ui->exit_time_label->setText(record.value("exit_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
     }
@@ -39,11 +45,11 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
 void TransactionsFrame::computeTransactions(const int &id, const bool &active)
 {
     QString queryString =
-            active?QString("SELECT active_transactions.title as Действие, products.title AS Продукт, active_transactions.quantity as Количество, active_transactions.time as Время, active_transactions.total_price as Сумма "
+            active?QString("SELECT active_transactions.title as Действие, products.title AS Продукт, active_transactions.quantity as Количество, activity_point as Пункт, active_transactions.time as Время, active_transactions.total_price as Сумма "
                            "FROM active_transactions "
                            "LEFT JOIN products ON active_transactions.product_id=products.id "
                            "WHERE active_transactions.active_bracers_id=%1;").arg(id)
-                 :QString("SELECT transactions_history.title as Действие, products.title AS Продукт, transactions_history.quantity as Количество, transactions_history.time as Время, transactions_history.total_price as Сумма "
+                 :QString("SELECT transactions_history.title as Действие, products.title AS Продукт, transactions_history.quantity as Количество, activity_point as Пункт, transactions_history.time as Время, transactions_history.total_price as Сумма "
                           "FROM transactions_history "
                           "LEFT JOIN products ON transactions_history.product_id=products.id "
                           "WHERE transactions_history.bracers_history_id=%1;").arg(id);
@@ -62,51 +68,66 @@ void TransactionsFrame::computeTransactions(const int &id, const bool &active)
 
     for(int i=0; i<rows; i++){
         rec = transactionModel.record(i);
-        temp+=rec.value("Сумма").toDouble();
+        if(rec.value("Действие").toString()=="Регистрация" or rec.value("Действие").toString()=="Покупка")
+            temp+=rec.value("Сумма").toDouble();
     }
     ui->total_transaction_label->setText(QString::number(temp, 'f', 2));
 }
 
 void TransactionsFrame::on_print_but_clicked()
 {
-//    QString strStream;
-//    QTextStream out(&strStream);
+    QString strStream;
+    QTextStream out(&strStream);
 
-//    const int rowCount = ui->tableView->model()->rowCount();
-//    const int columnCount = ui->tableView->model()->columnCount();
+    const int rowCount = ui->tableView->model()->rowCount();
+    QSqlQueryModel *model = static_cast<QSqlQueryModel*>(ui->tableView->model());
 
-//    out <<  QString("<html><head><meta Content=\"Text/html; charset=Windows-1251\"></head><body>"
-//                    "<p align=center>--- OASIS ---<br>"
-//                    "<p>Браслет №: %1<br>"
-//                    "Количество детей: %2<br>"
-//                    "Вход: 04.07.2018 / 12:10:47 [1]<br>"
-//                    "Время пребывания: %6<br>"
-//                    "Сверх лимит: %7<br>"
-//                    "Оплачиваемая сумма: %8"
-//                    "Транзакции:<br>"
-//                    "<ol>").arg()
+    out <<  QString("<html><head><meta Content=\"Text/html; charset=Windows-1251\"></head><body>"
+                    "<p align=center>--- OASIS ---<br>"
+                    "<p>Браслет №: %1<br>"
+                    "Количество детей: %2<br>"
+                    "Вход: %3 [%4]<br>"
+                    "Ожидаемый выход: %5<br>"
+                    "Баланс: %6<br>"
+                    "Транзакции:<br>"
+                    "<ol>").arg(ui->bracer_number_label->text())
+            .arg(ui->childs_label->text())
+            .arg(ui->enter_time_label->text())
+            .arg(ui->enter_number_label->text())
+            .arg(ui->exit_time_label->text())
+            .arg(ui->ballance_label->text());
 
+    //    // data table
+    for (int row = 0; row < rowCount; row++) {
+        QSqlRecord rec = model->record(row);
+        if(rec.value("Действие").toString()=="Покупка")
+            out<<QString("<li><font size=2px>%1 [%2]</font><br>%3 x %4 - %5 UZS<li>")
+                 .arg(rec.value("Время").toDateTime().toString("dd.MM.yyyy \ hh:mm:ss"))
+                 .arg(rec.value("Пункт").toString())
+                 .arg(rec.value("Количество").toString())
+                 .arg(rec.value("Продукт").toString())
+                 .arg(rec.value("Сумма").toString());
+        else
+            out<<QString("<li><font size=2px>%1 [%2]</font><br>%3 - %4 UZS<li>")
+                 .arg(rec.value("Время").toDateTime().toString("dd.MM.yyyy \ hh:mm:ss"))
+                 .arg(rec.value("Пункт").toString())
+                 .arg(rec.value("Действие").toString())
+                 .arg(rec.value("Сумма").toString());
+    }
+    out << QString("</ol><p align=right>---- Общий расход: %1 ----<p><font color=grey>powered by GSS.UZ</font></p></body></html>")
+           .arg(ui->total_transaction_label->text());
 
-//    // data table
-//    for (int row = 0; row < rowCount; row++) {
-//        out << "<tr>";
-//        for (int column = 0; column < columnCount; column++) {
-//            if (!ui->tableView->isColumnHidden(column)) {
-//                QString data = ui->tableView->model()->data(ui->tableView->model()->index(row, column)).toString().simplified();
-//                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
-//            }
-//        }
-//        out << "</tr>\n";
-//    }
-//    out <<  "</table>\n"
-//            "</body>\n"
-//            "</html>\n";
+    QPrinter bPrinter;
+    bPrinter.setFullPage(true);
+    bPrinter.setPageMargins(QMarginsF(2,2,2,2));
 
-//    QTextDocument document;
-//    document.setHtml(strStream);
-//    QPrinter bPrinter;
-//    QPrintDialog dialog(&bPrinter, NULL);
-//    if (dialog.exec() == QDialog::Accepted) {
-//        document.print(&bPrinter);
-//    }
+    QPrintDialog dialog(&bPrinter, NULL);
+    if (dialog.exec() == QDialog::Accepted) {
+
+        QTextDocument document;
+        document.setPageSize(bPrinter.pageRect().size());
+        document.setDocumentMargin(0);
+        document.setHtml(strStream);
+        document.print(&bPrinter);
+    }
 }

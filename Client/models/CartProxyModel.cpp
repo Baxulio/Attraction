@@ -6,7 +6,7 @@
 QVariant CartProxyModel::data(const QModelIndex &index, int role) const
 {
     if(role == Qt::DisplayRole){
-        QString temp = sourceModel()->headerData(index.column(),Qt::Horizontal).toString();
+        QString temp = sourceModel()->headerData(index.column(),Qt::Horizontal,Qt::EditRole).toString();
         int amount = QSortFilterProxyModel::data(this->index(index.row(), reinterpret_cast<QSqlTableModel*>(sourceModel())->fieldIndex("amount")),Qt::EditRole).toInt();
 
         if(temp == "title")

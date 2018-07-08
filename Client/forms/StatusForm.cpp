@@ -107,7 +107,7 @@ void StatusForm::on_allow_but_clicked()
     /////here is code for opening gate
     ///
     QByteArray ar;
-    QDataStream os(&ar);
+    QDataStream os(&ar, QIODevice::WriteOnly);
     os.setVersion(QDataStream::Qt_5_5);
 
     os<<code;
