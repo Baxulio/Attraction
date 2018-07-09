@@ -334,6 +334,11 @@ void MainWindow::readSettings()
     bareer.port = settings.value("bareer_port", quint32()).toUInt();
 
     bSettings->setBareerSettings(bareer);
+
+    SettingsDialog::ActivityPointSettings activity;
+    activity.activityPointNumber = settings.value("activity", quint8()).toUInt();
+
+    bSettings->setActivityPointSettings(activity);
 }
 
 void MainWindow::writeSettings()
@@ -350,4 +355,8 @@ void MainWindow::writeSettings()
     SettingsDialog::BareerSettings bareer = bSettings->bareerSettings();
     settings.setValue("bareer_host", bareer.host);
     settings.setValue("bareer_port", bareer.port);
+
+    SettingsDialog::ActivityPointSettings activity = bSettings->activityPointSettings();
+    settings.setValue("activity", activity.activityPointNumber);
+
 }

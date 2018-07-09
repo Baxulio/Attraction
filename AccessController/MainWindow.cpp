@@ -32,14 +32,26 @@ MainWindow::MainWindow(QWidget *parent) :
         QTcpSocket *socket = server->nextPendingConnection();
         connect(socket, &QTcpSocket::readyRead, [this,socket]{
             QByteArray arr = socket->readAll();
-            if(arr==QByteArray::fromStdString("kuwoy")){
+            QDataStream in(&arr,QIODevice::ReadOnly);
+            in.setVersion(QDataStream::Qt_5_5);
+            if(in.status()==QDataStream::ReadCorruptData){
+                return;
+            }
+            quint32 code=0;
+            in>>code;
+
+            if(code){
                 fromClient=true;
-                openBareer();
+                wiegandCallback(code);
             }
-            else if(arr==QByteArray::fromStdString("band")){
-                fromClient=false;
-                timeout();
-            }
+            //            if(arr==QByteArray::fromStdString("kuwoy")){
+            //                fromClient=true;
+            //                openBareer();
+            //            }
+            //            else if(arr==QByteArray::fromStdString("band")){
+            //                fromClient=false;
+            //                timeout();
+            //            }
         });
         connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
     });
@@ -62,8 +74,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::wiegandCallback(quint32 code)
 {
-    fromClient=false;
-
     if(bSettings->modeSettings().mode){
         if(!enter(code))return;
 
@@ -182,35 +192,35 @@ bool MainWindow::enter(quint32 code)
         return true;
     }
 
-    if(!query.exec(QString("SELECT id, enter_time, childs, entered_childs, (SELECT time_limit FROM tariff WHERE id=1) AS time_limit "
-                           "FROM active_bracers WHERE code=%1;").arg(code))){
+    if(!query.exec(QString("SELECT id FROM active_bracers WHERE code=%1 AND ISNULL(enter_time);").arg(code))){
         bDb.debugQuery(query);
         return false;
     }
 
     query.next();
     if(!query.isValid()){
-        ui->statusBar->showMessage("Карта не зарегистрирована!",2000);
+        ui->statusBar->showMessage("Карта не зарегистрирована или не зафиксирована при входе!",2000);
         return false;
     }
-
-    if(query.value("enter_time").isNull()){
-        enterRec = query.record();
-        return true;
-    }
-    else if(query.value("entered_childs").toUInt()<query.value("childs").toUInt()){
-        enterRec = query.record();
-        return true;
-    }
-    else {
-        ui->statusBar->showMessage("Уже зафиксирован при входе!",2000);
-        return false;
-    }
+    enterRec = query.record();
+    return true;
 }
 
 bool MainWindow::exit(quint32 code)
 {
     QSqlQuery query;
+
+    if(fromClient){
+        if(!query.exec(QString("SELECT id FROM active_bracers WHERE code=%1;").arg(code))){
+            bDb.debugQuery(query);
+            return false;
+        }
+        query.next();
+        if(!query.isValid())
+            return false;
+        exitRec = query.record();
+        return true;
+    }
     if(!query.exec(QString("SELECT id FROM staff_history WHERE staff_id=%1 AND ISNULL(exit_time) AND DATE(enter_time)=DATE(SYSDATE());").arg(code))){
         bDb.debugQuery(query);
         return false;
@@ -245,25 +255,9 @@ void MainWindow::interrupt()
             break;
         }
 
-        quint8 entered_childs = enterRec.value("entered_childs").toUInt();
-        quint8 childs = enterRec.value("childs").toUInt();
-        if(entered_childs<childs and !enterRec.value("enter_time").isNull()){
-            if(!query.exec(QString("UPDATE active_bracers "
-                                   "SET entered_childs=%1 "
-                                   "WHERE id=%2;")
-                           .arg(++entered_childs)
-                           .arg(enterRec.value("id").toInt()))){
-                bDb.debugQuery(query);
-                return;
-            }
-        }
-        else if(!query.exec(QString("UPDATE active_bracers "
-                                    "SET enter_time=SYSDATE(), "
-                                    "enter_number=%1, "
-                                    "expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=1) MINUTE "
-                                    "WHERE id=%2")
+        if(!query.exec(QString("CALL enter('%1','%2');")
                             .arg(bSettings->modeSettings().bareerNumber)
-                            .arg(enterRec.value("id").toInt()))){
+                            .arg(exitRec.value("id").toInt()))){
             bDb.debugQuery(query);
             return;
         }
@@ -272,18 +266,19 @@ void MainWindow::interrupt()
 
         //EXIT
     case false: {
-
         if(fromClient){
-            timeout();
-            fromClient = false;
-            return;
+            if(!query.exec(QString("CALL move_to_history('%1','%2');")
+                                .arg(bSettings->modeSettings().bareerNumber)
+                                .arg(exitRec.value("id").toInt()))){
+                bDb.debugQuery(query);
+                return;
+            }
+            break;
         }
-
-        if(!query.exec(QString("UPDATE staff_history SET exit_time=SYSDATE() WHERE id=%1;")
-                       .arg(exitRec.value("id").toInt())))
+        else if(!query.exec(QString("UPDATE staff_history SET exit_time=SYSDATE() WHERE id=%1;")
+                            .arg(exitRec.value("id").toInt())))
         {
             bDb.debugQuery(query);
-            return;
         }
     }
     }
@@ -295,6 +290,7 @@ void MainWindow::timeout()
 {
     digitalWrite(BAREER_PIN,LOW);
     bTimer.stop();
+    fromClient = false;
     enterRec.clearValues();
     exitRec.clearValues();
 }

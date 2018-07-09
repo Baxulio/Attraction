@@ -40,6 +40,7 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
         ui->exit_time_label->setText(record.value("exit_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
     }
     ui->ballance_label->setText(record.value("cash").toString());
+    ui->comment_textEdit->setText(record.value("comment").toString());
 }
 
 void TransactionsFrame::computeTransactions(const int &id, const bool &active)
@@ -102,14 +103,14 @@ void TransactionsFrame::on_print_but_clicked()
         QSqlRecord rec = model->record(row);
         if(rec.value("Действие").toString()=="Покупка")
             out<<QString("<li><font size=2px>%1 [%2]</font><br>%3 x %4 - %5 UZS<li>")
-                 .arg(rec.value("Время").toDateTime().toString("dd.MM.yyyy \ hh:mm:ss"))
+                 .arg(rec.value("Время").toDateTime().toString("dd.MM.yyyy \\ hh:mm:ss"))
                  .arg(rec.value("Пункт").toString())
                  .arg(rec.value("Количество").toString())
                  .arg(rec.value("Продукт").toString())
                  .arg(rec.value("Сумма").toString());
         else
             out<<QString("<li><font size=2px>%1 [%2]</font><br>%3 - %4 UZS<li>")
-                 .arg(rec.value("Время").toDateTime().toString("dd.MM.yyyy \ hh:mm:ss"))
+                 .arg(rec.value("Время").toDateTime().toString("dd.MM.yyyy \\ hh:mm:ss"))
                  .arg(rec.value("Пункт").toString())
                  .arg(rec.value("Действие").toString())
                  .arg(rec.value("Сумма").toString());

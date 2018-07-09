@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
--- Host:                         localhost
--- Server version:               5.7.20-log - MySQL Community Server (GPL)
--- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5278
+-- Хост:                         127.0.0.1
+-- Версия сервера:               5.7.16 - MySQL Community Server (GPL)
+-- Операционная система:         Win32
+-- HeidiSQL Версия:              9.4.0.5125
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -12,11 +12,11 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 
--- Dumping database structure for attraction
+-- Дамп структуры базы данных attraction
 CREATE DATABASE IF NOT EXISTS `attraction` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `attraction`;
 
--- Dumping structure for table attraction.active_bracers
+-- Дамп структуры для таблица attraction.active_bracers
 CREATE TABLE IF NOT EXISTS `active_bracers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` int(11) NOT NULL,
@@ -31,19 +31,14 @@ CREATE TABLE IF NOT EXISTS `active_bracers` (
   PRIMARY KEY (`id`),
   KEY `FK_active_bracers_deposit` (`deposit_id`),
   CONSTRAINT `FK_active_bracers_deposit` FOREIGN KEY (`deposit_id`) REFERENCES `deposit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.active_bracers: ~3 rows (approximately)
+-- Дамп данных таблицы attraction.active_bracers: ~1 rows (приблизительно)
 DELETE FROM `active_bracers`;
 /*!40000 ALTER TABLE `active_bracers` DISABLE KEYS */;
-INSERT INTO `active_bracers` (`id`, `code`, `bracer_number`, `enter_time`, `enter_number`, `expected_exit_time`, `deposit_id`, `childs`, `entered_childs`, `comment`) VALUES
-	(6, 13207180, 2, '2018-07-05 15:59:27', 2, '2018-07-05 18:59:27', 13, 0, 0, NULL),
-	(7, 14371684, 2, '2018-07-05 15:56:07', 2, '2018-07-05 18:56:07', 13, 0, 0, NULL),
-	(9, 14508180, 266, '2018-07-05 17:04:25', 2, '2018-07-05 20:04:25', 16, 1, 0, NULL),
-	(12, 13397412, 1, NULL, NULL, NULL, 19, 0, 0, '');
 /*!40000 ALTER TABLE `active_bracers` ENABLE KEYS */;
 
--- Dumping structure for table attraction.active_transactions
+-- Дамп структуры для таблица attraction.active_transactions
 CREATE TABLE IF NOT EXISTS `active_transactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` enum('Покупка','Оплата','Регистрация','Пополнение баланса','Возврат остатка','Штраф') NOT NULL DEFAULT 'Покупка',
@@ -58,24 +53,14 @@ CREATE TABLE IF NOT EXISTS `active_transactions` (
   KEY `FK_active_transactions_products` (`product_id`),
   CONSTRAINT `FK_active_transactions_active_bracers` FOREIGN KEY (`active_bracers_id`) REFERENCES `active_bracers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_active_transactions_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.active_transactions: ~8 rows (approximately)
+-- Дамп данных таблицы attraction.active_transactions: ~44 rows (приблизительно)
 DELETE FROM `active_transactions`;
 /*!40000 ALTER TABLE `active_transactions` DISABLE KEYS */;
-INSERT INTO `active_transactions` (`id`, `title`, `product_id`, `quantity`, `total_price`, `time`, `active_bracers_id`, `activity_point`) VALUES
-	(2, 'Регистрация', NULL, 1, 45000.00, '2018-07-05 15:53:21', 6, NULL),
-	(3, 'Регистрация', NULL, 1, 45000.00, '2018-07-05 15:53:24', 7, NULL),
-	(4, 'Регистрация', NULL, 1, 70000.00, '2018-07-05 16:59:07', 9, NULL),
-	(8, 'Регистрация', NULL, 1, 45000.00, '2018-07-07 14:22:39', 12, 10),
-	(9, 'Пополнение баланса', NULL, 1, 1000.00, '2018-07-07 23:04:44', 12, 19),
-	(10, 'Пополнение баланса', NULL, 1, 1500.00, '2018-07-07 23:15:08', 12, 32),
-	(11, 'Возврат остатка', NULL, 1, 1500.00, '2018-07-08 00:09:50', 12, 32),
-	(12, 'Пополнение баланса', NULL, 1, 2000.00, '2018-07-08 00:10:12', 12, 32),
-	(13, 'Оплата', NULL, 1, -2000.00, '2018-07-08 00:12:59', 12, 0);
 /*!40000 ALTER TABLE `active_transactions` ENABLE KEYS */;
 
--- Dumping structure for table attraction.bracers_history
+-- Дамп структуры для таблица attraction.bracers_history
 CREATE TABLE IF NOT EXISTS `bracers_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` int(11) NOT NULL,
@@ -87,46 +72,29 @@ CREATE TABLE IF NOT EXISTS `bracers_history` (
   `childs` tinyint(3) NOT NULL DEFAULT '0',
   `comment` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
--- Dumping data for table attraction.bracers_history: ~0 rows (approximately)
+-- Дамп данных таблицы attraction.bracers_history: ~2 rows (приблизительно)
 DELETE FROM `bracers_history`;
 /*!40000 ALTER TABLE `bracers_history` DISABLE KEYS */;
+INSERT INTO `bracers_history` (`id`, `code`, `bracer_number`, `enter_time`, `enter_number`, `exit_time`, `exit_number`, `childs`, `comment`) VALUES
+	(1, 123, 3, '2018-07-09 03:34:03', 4, '2018-07-09 03:51:12', 3, 2, NULL),
+	(2, 213, 2, '2018-07-09 03:51:35', 6, '2018-07-09 03:53:27', 3, 2, NULL);
 /*!40000 ALTER TABLE `bracers_history` ENABLE KEYS */;
 
--- Dumping structure for table attraction.deposit
+-- Дамп структуры для таблица attraction.deposit
 CREATE TABLE IF NOT EXISTS `deposit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cash` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.deposit: ~15 rows (approximately)
+-- Дамп данных таблицы attraction.deposit: ~19 rows (приблизительно)
 DELETE FROM `deposit`;
 /*!40000 ALTER TABLE `deposit` DISABLE KEYS */;
-INSERT INTO `deposit` (`id`, `cash`) VALUES
-	(1, -86920.00),
-	(2, 0.00),
-	(3, 0.00),
-	(4, 0.00),
-	(5, 0.00),
-	(6, 0.00),
-	(7, 0.00),
-	(8, 0.00),
-	(9, 0.00),
-	(10, 0.00),
-	(11, 0.00),
-	(12, 0.00),
-	(13, 0.00),
-	(14, 0.00),
-	(15, 0.00),
-	(16, 0.00),
-	(17, 10000.00),
-	(18, 1000.00),
-	(19, 0.00);
 /*!40000 ALTER TABLE `deposit` ENABLE KEYS */;
 
--- Dumping structure for table attraction.products
+-- Дамп структуры для таблица attraction.products
 CREATE TABLE IF NOT EXISTS `products` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(50) NOT NULL,
@@ -140,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `FK_products_product_types` FOREIGN KEY (`product_types_id`) REFERENCES `product_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.products: ~68 rows (approximately)
+-- Дамп данных таблицы attraction.products: ~70 rows (приблизительно)
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products` (`id`, `title`, `price`, `product_types_id`, `icon`, `comment`, `amount`) VALUES
@@ -216,7 +184,7 @@ INSERT INTO `products` (`id`, `title`, `price`, `product_types_id`, `icon`, `com
 	(90, 'Мини шаурма', 9000.00, 14, NULL, NULL, 0);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 
--- Dumping structure for table attraction.product_types
+-- Дамп структуры для таблица attraction.product_types
 CREATE TABLE IF NOT EXISTS `product_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(50) NOT NULL,
@@ -225,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `product_types` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.product_types: ~5 rows (approximately)
+-- Дамп данных таблицы attraction.product_types: ~6 rows (приблизительно)
 DELETE FROM `product_types`;
 /*!40000 ALTER TABLE `product_types` DISABLE KEYS */;
 INSERT INTO `product_types` (`id`, `title`, `icon`, `comment`) VALUES
@@ -237,7 +205,7 @@ INSERT INTO `product_types` (`id`, `title`, `icon`, `comment`) VALUES
 	(14, 'Fast Food', _binary 0x89504E470D0A1A0A0000000D4948445200000040000000400806000000AA6971DE000000097048597300000D6C00000D6C0135140FBD0000001974455874536F667477617265007777772E696E6B73636170652E6F72679BEE3C1A0000088649444154789CED9A6B6C14D715C77F67F685C1BB3880793AD42934091028A501C243E441A4B84ED3A83454AA94488D4A93564548FDD02A8A2AD148559B50092969121589E443533E244454699A84A0400A84E2E22621801124E0027E801FACD7BBB6D7BBF338FD30808D5F336BAF0D52F7278DB49AF9DF73CF3973E7DE73AF0D050A142850A04081FF5764B43BD0BDCCC108AF40588870275006321D340A8CBB22EB0649815E02EA514EA11CC7C91E96B59C1D4DFFF29E0055848F830F10083C063C0CDC3A429375C07BD8F6DBDC6FED134147EE650F794B80BE439492C853C046A03C5F76FB700E87574866B6C9A3A4F26170C409D08F091208FD0C35360353F2E0931F5A11E7396CF3CF723FD6480C8D2801BA2F720701FD0BC8B2BECFCCACF2D551F7F7371643283C0AD38D6A358E3C210F644E0FD78431ECBEF7472A09E891818207487740A6CBBDD21DC3EDC50391A504F488EE8F540EDBC4701AE981F0A3283B4142836A54B978CEFD3DA31C444673C1511361BDACC9BE936BCB9CBDD2FDA16F811C0229CAB5EDE8A269D05572AFF9792EAD72FA04F43F8440760C15FC85D3CAB1834AA2B567B54AB4BAF72E9CCEEB0AD6072902D9E1FAE89FDCE6808ED04F41E60D254934836D43F272CFBDE465F75EA239A7DE8681CC737DF44F8E93A0FCDC4B317B1E4C9E01D366F7DC9B36DBBD377BC8D4E50B6F1FAF53FB15EA5E66118CD4E5D2E606A158995B652D0D7EC441DF6643E3EEB4F5A60F1E40D418370FBA7D25C057405B0E56FCC810F9BDAA948FC4B3B142D1B396B2E2D9351FB478693DE7802D072B7F21183BC622F84C5D86B6BDEDA8ED6FB548D77663B69AFDEE0B322728BCEEC7866702043631C848511DD8513BED90AC4AD17E3845F7850CEA7807946D316978B589F8EE046AF5E8CD368BCBEFB661B55F5FF2C73F4CD0F84A130D2F5FC2E97606F05BBEBBE5C0434BBCFAF59C0314CAFB466F252C5A76C5499F4E33F97B9398B82A7AED99DD69D3F0A74B982D3D0E074B02C4564689AD2826303E30603FF17FB4A159A568EE388C88FB5EEC0E9BC6579BB0E21691AF45285EE4BA9BAEEDA66D4FBBAB4939B4ED6B6772E52DFD6C1A8651017C36A20408EC00FD318898718BD4A71D243E4EA219F72DB5FE2D4E201AA078D178D4529ADE68BD2E78002B61137F3F41DB47ED44EF9EC0C45551C2D3C3D79E77D674D179220D4078865BC798AD26175F6FC18ABBB6BA6ABADC3E5489BF97B8CE7E625F92E0C420B195C5BD4B6EC7464FF888CF9B8D0F2EDCEA64F5974EF720433900B1E5C5641A4D32E7327E4C122A0D1299150643E83CDE859AAEED402C40D19C089DC7D3D77D0A00256B63D89D0EA9AA81775791F208C58BC763840DB28DD9D75ED85AB5C1CB0F5FCBA0957486DEE7DB90FC576E5B3EB3C5EA375200ECA44DC7E75D03B649EC4D0E6933732ED3FB058487D25EC55725A868B51FDDCD845F9F7D2520DE98DCAEAA4746E6D2D8A1AA47E28DC9ED7EB4BE2BBBF56565459366C6362CBD37FC3C2AC33E481955449DEAFDD967E28DC9ED3BEBEBD3BE9AE4DA87B6AC1ACD3DED8891D24339C5E44BACAB790B61FDB51686B81F4F40206440C48048008A023021081302100D4149084AC230250C532230759CABC907CDDDF0691B9C4E415D17B466A0CB86AB55A4B2533EE1875E66FC6F86AEA2B89DD880A9D0ED90D301754908661641F904B8EDCA75EB7837915EA42DF8670BEC6D82DACE9C5D1F88DC13305212A67B9DECB5A485046E8FC25D13615109DC117547D955D236FCBD01DE6D74DF721E19FB040C84A9509374AF37EB606208964F82B5D3A02503AFD5425BFF4D4F3EB83912D0977613F634B9D728E32F01CA5684B70078E6CE3746D3A111F3FCA9270050EAFDC87D25400E5105B061D1DCB24D12D348984849A9614C99666004C6E690481D25DD05E94EA5BB4BC9661433AB6A59D88E83AAAD8A88F952FBDCAAEDC7CEF80A1E72A8039E5EBAE037226CA657D24211B8EDF620772D0BB2784588D219C35FE2520987A60687E6069BCBCD0EF166A5ADD521957048B6299D296590E387BE58AA3CB7ADBAE6777EC4BE12F0F4D2051508EF8B87FEF68541EE7B24CCE21521C4185C9A4A389CA9B1B870C6A6EEAC4D5DAD4DB22D7FF59582A2546EABAED9EDA5F53B09AEF30A1EE0CBE3165F1EB798596EB0EEC92216DCEDEEED6D5B395363F1C56193535F585C3CDFFF04279F0888C23A206F09C889C6730E2F6FEE64C9EA1093A61AFC7B6F9654FBCD5941FB4DC02E850D7E46416F3EFB6474D66E2FD4AD5777F9D1FADAD56DABAED91DBBA7F888188CEED8CD0362E044974E3834E3E19A3DBEF47E447F3C58B90978D14A5A56B6C1B4FC1E5B8F351210C265E160301A0822BCD779CBF975BF5D50931DB28D97D197AABE13CB98520F44BDB4371DC21F7EB5FAFD678792787E02E98C3EC818056FA8C3441DF83C7060861E89EAE8539E7D7A090286313F078FAE11568B716AE2E5E455426AF1B856B3410F13D09E1D9FA8324D93F4AD82E6680B1B9D03AC754E0D6A53848857BF9EAB80AD1A3606F8F79672BDCC7CBDC85129A3514AAE7BB6526BB947FF8B012435C2194A392A65C465C2A0FD2CD7F34CA58326A2D8E25694A2CAA37A8CB9B4F25759CA2562004CD60E1ED1130471584C03C77526CD121BC0AA5479C5E739020CD17DBDD35FACDD543835FC408F329F261ED3A3946ACF89C8426D60E595E001626458423D4F6A15DF778E325BE3F41D1551EDE6DB5C00E002B75C09DEE1213DC95C5A0198DAEBD4658D9E2578654112A0524F52A4FDE63A5578D12B3E9FAB40C57D77D0F2F8379DFA9FCCA29D409F003A08F3A1CC234A86B57ABADFF3BE5C663C5F31952689E220ACD65A4A71FFAE708E497C21B358A6E79941CFA1498A086FCA12A693E461ADE9E7788A089FC8D7394B291909C61DE5855FAFF9604B5E1200A007C28FA1B2D3AFFE8622BA5ED664DFF623F57FBC6D3B096FD14D420EBEFA4F40DA3A08D40EC79F31A6F68AAFBEF09D00A92403990A848FA0FF8C73E3D1ACEB5BA6C2F5B5408102050A1428506068FE0794BE7A58D6135ABB0000000049454E44AE426082, NULL);
 /*!40000 ALTER TABLE `product_types` ENABLE KEYS */;
 
--- Dumping structure for table attraction.staff
+-- Дамп структуры для таблица attraction.staff
 CREATE TABLE IF NOT EXISTS `staff` (
   `id_code` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -245,14 +213,12 @@ CREATE TABLE IF NOT EXISTS `staff` (
   PRIMARY KEY (`id_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.staff: ~1 rows (approximately)
+-- Дамп данных таблицы attraction.staff: ~0 rows (приблизительно)
 DELETE FROM `staff`;
 /*!40000 ALTER TABLE `staff` DISABLE KEYS */;
-INSERT INTO `staff` (`id_code`, `name`, `occupation`) VALUES
-	(3173345, 'Вася', 'Бармен');
 /*!40000 ALTER TABLE `staff` ENABLE KEYS */;
 
--- Dumping structure for table attraction.staff_history
+-- Дамп структуры для таблица attraction.staff_history
 CREATE TABLE IF NOT EXISTS `staff_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `staff_id` int(11) NOT NULL,
@@ -263,29 +229,12 @@ CREATE TABLE IF NOT EXISTS `staff_history` (
   CONSTRAINT `FK_staff_history_staff` FOREIGN KEY (`staff_id`) REFERENCES `staff` (`id_code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.staff_history: ~15 rows (approximately)
+-- Дамп данных таблицы attraction.staff_history: ~0 rows (приблизительно)
 DELETE FROM `staff_history`;
 /*!40000 ALTER TABLE `staff_history` DISABLE KEYS */;
-INSERT INTO `staff_history` (`id`, `staff_id`, `enter_time`, `exit_time`) VALUES
-	(5, 3173345, '2018-07-04 23:00:54', '2018-07-04 23:01:01'),
-	(6, 3173345, '2018-07-04 23:01:06', '2018-07-04 23:01:12'),
-	(7, 3173345, '2018-07-04 23:01:23', '2018-07-04 23:01:29'),
-	(8, 3173345, '2018-08-04 23:01:36', '2018-07-04 23:03:27'),
-	(9, 3173345, '2018-07-04 23:03:41', '2018-07-04 23:20:08'),
-	(10, 3173345, '2018-07-04 23:33:14', '2018-07-04 23:33:17'),
-	(11, 3173345, '2018-07-04 23:33:22', NULL),
-	(12, 3173345, '2018-07-05 15:54:51', '2018-07-05 15:55:08'),
-	(13, 3173345, '2018-07-05 15:55:13', '2018-07-05 15:55:17'),
-	(14, 3173345, '2018-07-05 15:58:33', '2018-07-05 15:58:39'),
-	(15, 3173345, '2018-07-05 15:59:33', '2018-07-05 15:59:37'),
-	(16, 3173345, '2018-07-05 15:59:48', '2018-07-05 15:59:51'),
-	(17, 3173345, '2018-07-05 16:00:55', '2018-07-05 16:00:57'),
-	(18, 3173345, '2018-07-05 16:03:30', '2018-07-05 16:03:33'),
-	(19, 3173345, '2018-07-05 16:03:51', '2018-07-05 16:03:54'),
-	(20, 3173345, '2018-07-05 17:04:02', '2018-07-05 17:04:09');
 /*!40000 ALTER TABLE `staff_history` ENABLE KEYS */;
 
--- Dumping structure for table attraction.tariff
+-- Дамп структуры для таблица attraction.tariff
 CREATE TABLE IF NOT EXISTS `tariff` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(50) NOT NULL,
@@ -295,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `tariff` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
--- Dumping data for table attraction.tariff: ~2 rows (approximately)
+-- Дамп данных таблицы attraction.tariff: ~2 rows (приблизительно)
 DELETE FROM `tariff`;
 /*!40000 ALTER TABLE `tariff` DISABLE KEYS */;
 INSERT INTO `tariff` (`id`, `title`, `price`, `time_limit`, `price_limit`) VALUES
@@ -303,7 +252,7 @@ INSERT INTO `tariff` (`id`, `title`, `price`, `time_limit`, `price_limit`) VALUE
 	(2, 'Детский', 20000.00, 0, 0.00);
 /*!40000 ALTER TABLE `tariff` ENABLE KEYS */;
 
--- Dumping structure for table attraction.transactions_history
+-- Дамп структуры для таблица attraction.transactions_history
 CREATE TABLE IF NOT EXISTS `transactions_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` enum('Покупка','Оплата','Регистрация','Пополнение баланса','Возврат остатка','Штраф') NOT NULL DEFAULT 'Покупка',
@@ -312,7 +261,7 @@ CREATE TABLE IF NOT EXISTS `transactions_history` (
   `total_price` decimal(10,2) NOT NULL,
   `time` datetime NOT NULL,
   `bracers_history_id` int(11) NOT NULL,
-  `reception` tinyint(4) unsigned DEFAULT NULL,
+  `activity_point` tinyint(4) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_active_transactions_active_bracers` (`bracers_history_id`),
   KEY `FK_transactions_history_products` (`product_id`),
@@ -320,12 +269,12 @@ CREATE TABLE IF NOT EXISTS `transactions_history` (
   CONSTRAINT `transactions_history_ibfk_1` FOREIGN KEY (`bracers_history_id`) REFERENCES `bracers_history` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
--- Dumping data for table attraction.transactions_history: ~0 rows (approximately)
+-- Дамп данных таблицы attraction.transactions_history: ~0 rows (приблизительно)
 DELETE FROM `transactions_history`;
 /*!40000 ALTER TABLE `transactions_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `transactions_history` ENABLE KEYS */;
 
--- Dumping structure for procedure attraction.add_cash
+-- Дамп структуры для процедура attraction.add_cash
 DELIMITER //
 CREATE DEFINER=`root`@`%` PROCEDURE `add_cash`(
 	IN `b_cash` DECIMAL(10,2),
@@ -350,11 +299,37 @@ VALUES ('Пополнение баланса', b_cash, SYSDATE(), b_bracer_id, b
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.make_payment
+-- Дамп структуры для процедура attraction.enter
+DELIMITER //
+CREATE DEFINER=`root`@`%` PROCEDURE `enter`(
+	IN `b_bareer` INT,
+	IN `b_bracer_id` INT
+
+
+
+)
+BEGIN
+
+DECLARE b_entered_childs INT;
+DECLARE b_childs INT;
+
+SELECT childs, entered_childs FROM active_bracers WHERE id=b_bracer_id INTO b_childs, b_entered_childs;
+
+IF b_entered_childs<b_childs THEN
+	UPDATE active_bracers SET entered_childs=b_entered_childs+1 WHERE id=b_bracer_id;
+ELSE
+	UPDATE active_bracers SET enter_time=SYSDATE(), enter_number=b_bareer, expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=1) MINUTE WHERE id=b_bracer_id;
+END IF;
+
+END//
+DELIMITER ;
+
+-- Дамп структуры для процедура attraction.make_payment
 DELIMITER //
 CREATE DEFINER=`root`@`%` PROCEDURE `make_payment`(
 	IN `update_text` TINYTEXT,
 	IN `transactions_text` TINYTEXT
+
 
 
 
@@ -367,6 +342,8 @@ SET @s = update_text;
 PREPARE stmt FROM @s;
 EXECUTE stmt;
 
+DEALLOCATE PREPARE stmt;
+
 SET @s = transactions_text;
 PREPARE stmt FROM @s;
 EXECUTE stmt;
@@ -376,7 +353,7 @@ DEALLOCATE PREPARE stmt;
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.move_to_history
+-- Дамп структуры для процедура attraction.move_to_history
 DELIMITER //
 CREATE DEFINER=`root`@`%` PROCEDURE `move_to_history`(
 	IN `b_exit_number` TINYINT,
@@ -387,31 +364,41 @@ CREATE DEFINER=`root`@`%` PROCEDURE `move_to_history`(
 
 
 
+
+
+
 )
 BEGIN
 
+DECLARE b_entered_childs INT;
 DECLARE b_last_insert_id INT;
 
-INSERT INTO bracers_history(code, bracer_number, enter_time, enter_number, exit_time, exit_number, tariff_id)
-SELECT code, bracer_number, enter_time, enter_number, SYSDATE(), b_exit_number, tariff_id
-FROM active_bracers
-WHERE id = b_bracer_id;
+SELECT entered_childs FROM active_bracers WHERE id=b_bracer_id INTO b_entered_childs;
 
-SET b_last_insert_id=LAST_INSERT_ID();
+IF b_entered_childs>0 THEN
+	UPDATE active_bracers SET entered_childs=b_entered_childs-1 WHERE id=b_bracer_id;
+ELSE
+	INSERT INTO bracers_history(code, bracer_number, enter_time, enter_number, exit_time, exit_number, childs, comment)
+	SELECT code, bracer_number, enter_time, enter_number, SYSDATE(), b_exit_number, childs, comment
+	FROM active_bracers
+	WHERE id = b_bracer_id;
 
-INSERT INTO transactions_history(title, product_id, quantity, total_price, time, bracers_history_id, reception)
-SELECT title, product_id, quantity, total_price, time, b_last_insert_id, reception
-FROM active_transactions
-WHERE active_bracers_id = b_bracer_id;
+	SET b_last_insert_id=LAST_INSERT_ID();
 
-DELETE FROM active_bracers WHERE  id=b_bracer_id;
+	INSERT INTO transactions_history(title, product_id, quantity, total_price, time, bracers_history_id, activity_point)
+	SELECT title, product_id, quantity, total_price, time, b_last_insert_id, activity_point
+	FROM active_transactions
+	WHERE active_bracers_id = b_bracer_id;
+
+	DELETE FROM active_bracers WHERE id=b_bracer_id;
+END IF;
 
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.penalty
+-- Дамп структуры для процедура attraction.penalty
 DELIMITER //
-CREATE DEFINER=`Orange`@`localhost` PROCEDURE `penalty`(
+CREATE DEFINER=`root`@`%` PROCEDURE `penalty`(
 	IN `b_minutes` INT,
 	IN `b_bracer_id` INT
 
@@ -425,16 +412,25 @@ CREATE DEFINER=`Orange`@`localhost` PROCEDURE `penalty`(
 
 
 
+,
+	IN `b_activity_point` INT
+,
+	IN `b_penalty` DECIMAL(10,2)
+
 )
 BEGIN
 
 UPDATE active_bracers SET expected_exit_time=expected_exit_time + INTERVAL b_minutes MINUTE WHERE id=b_bracer_id;
+
 UPDATE deposit SET cash=b_cash WHERE id=b_deposit_id;
- 
+
+INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point) 
+VALUES ('Штраф', b_penalty, SYSDATE(), b_bracer_id, b_activity_point);
+
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.register
+-- Дамп структуры для процедура attraction.register
 DELIMITER //
 CREATE DEFINER=`root`@`%` PROCEDURE `register`(
 	IN `b_childs` TINYINT,
@@ -482,7 +478,7 @@ END IF;
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.return_debt
+-- Дамп структуры для процедура attraction.return_debt
 DELIMITER //
 CREATE DEFINER=`root`@`%` PROCEDURE `return_debt`(
 	IN `b_deposit_id` INT,
@@ -509,13 +505,14 @@ UPDATE deposit SET cash='0' WHERE  id=b_deposit_id;
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.return_remainder
+-- Дамп структуры для процедура attraction.return_remainder
 DELIMITER //
-CREATE DEFINER=`Server`@`%` PROCEDURE `return_remainder`(
+CREATE DEFINER=`root`@`%` PROCEDURE `return_remainder`(
 	IN `b_deposit_id` INT,
 	IN `b_bracer_id` INT,
 	IN `b_cash` DECIMAL(10,2),
 	IN `b_activity_point` INT
+
 )
 BEGIN
 
@@ -527,7 +524,7 @@ UPDATE deposit SET cash='0' WHERE  id=b_deposit_id;
 END//
 DELIMITER ;
 
--- Dumping structure for procedure attraction.unite_bracers
+-- Дамп структуры для процедура attraction.unite_bracers
 DELIMITER //
 CREATE DEFINER=`root`@`%` PROCEDURE `unite_bracers`(
 	IN `b_stmt1` TEXT,
@@ -549,7 +546,7 @@ DEALLOCATE PREPARE stmt;
 END//
 DELIMITER ;
 
--- Dumping structure for event attraction.deposit_cleanup
+-- Дамп структуры для событие attraction.deposit_cleanup
 DELIMITER //
 CREATE DEFINER=`root`@`%` EVENT `deposit_cleanup` ON SCHEDULE EVERY 1 DAY STARTS '2018-05-18 00:00:00' ON COMPLETION PRESERVE ENABLE DO BEGIN
 TRUNCATE TABLE deposit;

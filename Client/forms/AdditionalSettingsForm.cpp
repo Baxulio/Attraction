@@ -41,6 +41,7 @@ void AdditionalSettingsForm::on_refresh()
     bDb.tariffModel->setHeaderData(bDb.tariffModel->fieldIndex("title"),Qt::Horizontal,"Название",Qt::DisplayRole);
     bDb.tariffModel->setHeaderData(bDb.tariffModel->fieldIndex("price"),Qt::Horizontal,"Цена",Qt::DisplayRole);
     bDb.tariffModel->setHeaderData(bDb.tariffModel->fieldIndex("time_limit"),Qt::Horizontal,"Время [в минутах]",Qt::DisplayRole);
+    bDb.tariffModel->setHeaderData(bDb.tariffModel->fieldIndex("price_limit"),Qt::Horizontal,"Ограничение баланса [в UZS]",Qt::DisplayRole);
 }
 
 void AdditionalSettingsForm::on_add_tariff_clicked()
@@ -55,6 +56,9 @@ void AdditionalSettingsForm::on_delete_tariff_clicked()
 
 void AdditionalSettingsForm::on_tariffs_submit_clicked()
 {
+    if(bDb.tariffModel->isDirty(bDb.tariffModel->index(0,bDb.tariffModel->fieldIndex("title")))
+            or bDb.tariffModel->isDirty(bDb.tariffModel->index(1,bDb.tariffModel->fieldIndex("title"))))
+        return;
     if(!bDb.tariffModel->submitAll())
         bDb.debugError(bDb.tariffModel->lastError());
 }

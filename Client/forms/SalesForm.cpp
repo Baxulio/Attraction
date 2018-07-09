@@ -17,6 +17,7 @@ SalesForm::SalesForm(SettingsDialog &set, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    qDebug()<<bSetings.activityPointSettings().activityPointNumber;
     typesModel.setEditStrategy(QSqlTableModel::OnManualSubmit);
     productTypesProxyModel.setSourceModel(&typesModel);
     ui->types_listView->setModel(&productTypesProxyModel);
