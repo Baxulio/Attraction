@@ -18,6 +18,9 @@
 #include "forms/DashboardForm.h"
 #include "forms/AdditionalSettingsForm.h"
 #include "forms/SalesForm.h"
+#include "forms/BarStatusForm.h"
+#include "forms/TransactionsForm.h"
+#include "forms/StaffForm.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,26 +33,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stack_widget_layout->insertWidget(0,bStackedWidget,1);
     bStackedWidget->setSpeed(370);
     connect(bStackedWidget, &SlidingStackedWidget::currentChanged, [this](int n){
-        if(qobject_cast<RegisterForm*>(bStackedWidget->widget(n)))ui->register_button->setChecked(true);
+        if(qobject_cast<RegisterForm*>(bStackedWidget->widget(n))){
+            ui->register_button->setChecked(true);
+        }
         else if(qobject_cast<UniteForm*>(bStackedWidget->widget(n)))ui->unite_button->setChecked(true);
         else if(qobject_cast<StatusForm*>(bStackedWidget->widget(n))){
             ui->status_button->setChecked(true);
             qobject_cast<StatusForm*>(bStackedWidget->widget(n))->on_retrieve_info_but_clicked();
         }
-        else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n))){
-            ui->products_button->setChecked(true);
-            return;
-        }
+        else if(qobject_cast<BarStatusForm*>(bStackedWidget->widget(n)))ui->bar_status_but->setChecked(true);
+        else if(qobject_cast<ProductsForm*>(bStackedWidget->widget(n)))ui->products_button->setChecked(true);
         else if(qobject_cast<DashboardForm*>(bStackedWidget->widget(n)))ui->dashboard_but->setChecked(true);
-        else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n))){
-            ui->additional_settings_button->setChecked(true);
-            return;
-        }
+        else if(qobject_cast<AdditionalSettingsForm*>(bStackedWidget->widget(n)))ui->additional_settings_button->setChecked(true);
         else if(qobject_cast<HistoryForm*>(bStackedWidget->widget(n)))ui->history_button->setChecked(true);
-        else if(qobject_cast<SalesForm*>(bStackedWidget->widget(n))){
-            ui->sales_button->setChecked(true);
-            return;
-        }
+        else if(qobject_cast<SalesForm*>(bStackedWidget->widget(n)))ui->sales_button->setChecked(true);
+        else if(qobject_cast<TransactionsForm*>(bStackedWidget->widget(n)))ui->transactions_but->setChecked(true);
+        else if(qobject_cast<StaffForm*>(bStackedWidget->widget(n)))ui->staff_but->setChecked(true);
 
         emit ui->autoUpdate_button->clicked();
     });
@@ -76,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     ui->connectButton->clicked();
+    ui->register_button->toggled(true);
 }
 
 MainWindow::~MainWindow()
@@ -140,8 +140,10 @@ void MainWindow::initActionsConnections()
             bDb.debugError(bDb.tariffModel->lastError());
             return;
         }
-        ui->adult_tariff_price_label->setText(bDb.tariffModel->record(0).value("price").toString());
-        ui->children_tariff_price_label->setText(bDb.tariffModel->record(1).value("price").toString());
+        ui->first_tariff_label->setText(bDb.tariffModel->record(0).value("title").toString());
+        ui->second_tariff_label->setText(bDb.tariffModel->record(1).value("title").toString());
+        ui->first_tariff_price_label->setText(bDb.tariffModel->record(0).value("price").toString());
+        ui->second_tariff_price_label->setText(bDb.tariffModel->record(1).value("price").toString());
 
         emit bDb.refresh();
     });
@@ -218,6 +220,22 @@ void MainWindow::initActionsConnections()
         StatusForm *statusForm = new StatusForm(*bSettings, this);
         bStackedWidget->slideInIdx(bStackedWidget->addWidget(statusForm));
         connect(statusForm, &StatusForm::back, [this, statusForm](){
+            if(bStackedWidget->count()<2)return;
+            bStackedWidget->removeWidget(statusForm);
+            statusForm->deleteLater();
+        });
+    });
+    connect(ui->bar_status_but, &QPushButton::toggled, [this](bool checked){
+        if(!checked)return;
+        for (int i = 0; i < bStackedWidget->count(); i++) {
+            if(qobject_cast<BarStatusForm*>(bStackedWidget->widget(i))){
+                bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
+                return;
+            }
+        }
+        BarStatusForm *statusForm = new BarStatusForm(*bSettings, this);
+        bStackedWidget->slideInIdx(bStackedWidget->addWidget(statusForm));
+        connect(statusForm, &BarStatusForm::back, [this, statusForm](){
             if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(statusForm);
             statusForm->deleteLater();
@@ -301,6 +319,40 @@ void MainWindow::initActionsConnections()
             if(bStackedWidget->count()<2)return;
             bStackedWidget->removeWidget(salesForm);
             salesForm->deleteLater();
+        });
+    });
+
+    connect(ui->transactions_but, &QPushButton::toggled, [this](bool checked){
+        if(!checked)return;
+        for (int i = 0; i < bStackedWidget->count(); i++) {
+            if(qobject_cast<TransactionsForm*>(bStackedWidget->widget(i))){
+                bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
+                return;
+            }
+        }
+        TransactionsForm *transactionsForm = new TransactionsForm(this);
+        bStackedWidget->slideInIdx(bStackedWidget->addWidget(transactionsForm));
+        connect(transactionsForm, &TransactionsForm::back, [this, transactionsForm](){
+            if(bStackedWidget->count()<2)return;
+            bStackedWidget->removeWidget(transactionsForm);
+            transactionsForm->deleteLater();
+        });
+    });
+
+    connect(ui->staff_but, &QPushButton::toggled, [this](bool checked){
+        if(!checked)return;
+        for (int i = 0; i < bStackedWidget->count(); i++) {
+            if(qobject_cast<StaffForm*>(bStackedWidget->widget(i))){
+                bStackedWidget->slideInIdx(i/*,SlidingStackedWidget::t_direction::AUTOMATIC*/);
+                return;
+            }
+        }
+        StaffForm *staffForm = new StaffForm(this);
+        bStackedWidget->slideInIdx(bStackedWidget->addWidget(staffForm));
+        connect(staffForm, &StaffForm::back, [this, staffForm](){
+            if(bStackedWidget->count()<2)return;
+            bStackedWidget->removeWidget(staffForm);
+            staffForm->deleteLater();
         });
     });
 }

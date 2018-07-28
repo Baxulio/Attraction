@@ -23,6 +23,8 @@ private:
     DatabaseManager &bDb;
     SettingsDialog &bSetings;
 
+private:
+    void updatePriceLabel();
 signals:
     void back();
 
@@ -34,6 +36,9 @@ private slots:
     void on_drop_bracer_but_clicked();
     void on_bracer_number_spinBox_valueChanged(int arg1);
     void on_childs_spinBox_valueChanged(int arg1);
+    void on_tariff_comboBox_currentIndexChanged(int index);
+    void on_resetFields_but_clicked();
+    void on_cash_doubleSpinBox_valueChanged(double arg1);
 };
 
 #endif // REGISTERFORM_H

@@ -3,6 +3,7 @@
 
 #include <QMessageBox>
 #include "dialogs/WieagandReaderDialog.h"
+#include "dialogs/PaymentMethodDialog.h"
 
 #include <QDateTime>
 
@@ -29,9 +30,10 @@ bool StatusForm::retrieve_info(const quint32 &code)
     QSqlQuery query;
     if(!query.exec(QString("SELECT active_bracers.id, active_bracers.code, active_bracers.bracer_number, "
                            "active_bracers.enter_time, active_bracers.expected_exit_time, active_bracers.enter_number, active_bracers.entered_childs, active_bracers.deposit_id,"
-                           "active_bracers.childs, active_bracers.comment, deposit.cash, SYSDATE() as cur_date_time "
-                           "FROM (active_bracers "
+                           "active_bracers.childs, active_bracers.comment, deposit.cash, SYSDATE() as cur_date_time, tariff.title, tariff.price_limit, tariff.price, tariff.time_limit "
+                           "FROM ((active_bracers "
                            "INNER JOIN deposit ON active_bracers.deposit_id=deposit.id) "
+                           "INNER JOIN tariff ON active_bracers.tariff_id = tariff.id) "
                            "WHERE code=%1;").arg(code))){
         bDb.debugQuery(query);
         return false;
@@ -58,12 +60,10 @@ bool StatusForm::retrieve_info(const quint32 &code)
     if(elapsed>timeLimit){
         //here goes penalty
         double cache = query.value("cash").toDouble();
-
+        elapsed-=timeLimit;
         int minutes = int(elapsed%60==0?elapsed/60:1+elapsed/60)*60;
 
-        double penalty = minutes*(bDb.tariffModel->record(0).value("price").toDouble()/bDb.tariffModel->record(0).value("time_limit").toDateTime().time().minute());
-
-        qDebug()<<bSetings.activityPointSettings().activityPointNumber;
+        double penalty = minutes*(query.value("price").toDouble()/query.value("time_limit").toInt());
         if(!query.exec(QString("CALL penalty(%1,%2,%3,%4,%5,%6);")
                        .arg(minutes)
                        .arg(query.value("id").toInt())
@@ -101,7 +101,8 @@ bool StatusForm::retrieve_info(const quint32 &code)
         ui->allow_but->setEnabled(false);
     }
 
-    ui->cash_doubleSpinBox->setMaximum(bDb.tariffModel->record(0).value("price_limit").toDouble()-ballance);
+    ui->cash_doubleSpinBox->setMaximum(currentRecord.value("price_limit").toDouble()-ballance);
+
     return true;
 }
 
@@ -118,6 +119,8 @@ void StatusForm::on_retrieve_info_but_clicked()
     }
     if(retrieve_info(dialog.getCode()))
         transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
+
+    transactionsFrame->on_print_but_clicked();
 }
 
 void StatusForm::on_allow_but_clicked()
@@ -126,9 +129,19 @@ void StatusForm::on_allow_but_clicked()
     if(dialog.exec() != QDialog::Accepted){
         return;
     }
+
     quint32 code = dialog.getCode();
-    if(!retrieve_info(code) or !ui->allow_but->isEnabled())
+    if(!retrieve_info(code) or !ui->allow_but->isEnabled()){
+        QMessageBox::warning(this, "Неудалось открыть турникет",
+                             QString("Для выяснения причины перепроверьте браслет!"));
         return;
+    }
+
+    if(currentRecord.value("enter_time").isNull()){
+        QMessageBox::warning(this, "Неудалось открыть турникет",
+                             QString("Браслет не зафиксирован при входе!"));
+        return;
+    }
 
     QTcpSocket *socket = new QTcpSocket(this);
     socket->connectToHost(bSetings.bareerSettings().host, bSetings.bareerSettings().port);
@@ -137,19 +150,17 @@ void StatusForm::on_allow_but_clicked()
                              QString("Не удалось подключиться к турникету!"));
         return;
     }
-
     /////here is code for opening gate
     ///
-    QByteArray ar;
-    QDataStream os(&ar, QIODevice::WriteOnly);
-    os.setVersion(QDataStream::Qt_5_5);
+    if(socket->write(QByteArray::number(code))<0)
+        qDebug()<<"fuka";
 
-    os<<code;
-
-    socket->write(ar);
+    socket->waitForBytesWritten(5000);
     socket->deleteLater();
     ///
     ///
+    if(retrieve_info(code))
+        transactionsFrame->computeTransactions(currentRecord.value("id").toInt(),true);
 }
 
 void StatusForm::on_add_ballance_but_clicked()
@@ -167,17 +178,18 @@ void StatusForm::on_add_ballance_but_clicked()
     if(!retrieve_info(code) or !ui->add_ballance_but->isEnabled())
         return;
 
-    if (QMessageBox::question(this, "Появился вопрос",
-                              QString("Пополняемая сумма: %1\nВы точно хотите сделать это?").arg(ui->cash_doubleSpinBox->value()))
-            !=QMessageBox::Yes)
+    PaymentMethodDialog paymentMethodDialog(QString("Пополняемая сумма: %1\nВы точно хотите сделать это?").arg(ui->cash_doubleSpinBox->value()),this);
+    if(paymentMethodDialog.exec() != QDialog::Accepted){
         return;
+    }
 
     QSqlQuery query;
-    if(!query.exec(QString("CALL `add_cash`(%1, %2, %3, %4);")
+    if(!query.exec(QString("CALL `add_cash`(%1, %2, %3, %4, %5);")
                    .arg(ui->cash_doubleSpinBox->value())
                    .arg(currentRecord.value("id").toInt())
                    .arg(currentRecord.value("deposit_id").toInt())
-                   .arg(bSetings.activityPointSettings().activityPointNumber))){
+                   .arg(bSetings.activityPointSettings().activityPointNumber)
+                   .arg(paymentMethodDialog.isTerminal()))){
         bDb.debugQuery(query);
         return;
     }
@@ -197,17 +209,18 @@ void StatusForm::on_pay_but_clicked()
     if(!retrieve_info(code) or !ui->pay_but->isEnabled())
         return;
 
-    if (QMessageBox::question(this, "Появился вопрос",
-                              QString("Оплачиваемая сумма: %1\nВы точно хотите сделать это?").arg(-currentRecord.value("cash").toDouble()))
-            !=QMessageBox::Yes)
+    PaymentMethodDialog paymentMethodDialog(QString("Оплачиваемая сумма: %1\nВы точно хотите сделать это?").arg(-currentRecord.value("cash").toDouble()),this);
+    if(paymentMethodDialog.exec() != QDialog::Accepted){
         return;
+    }
 
     QSqlQuery query;
-    if(!query.exec(QString("CALL `return_debt`(%1, %2, %3, %4);")
+    if(!query.exec(QString("CALL `return_debt`(%1, %2, %3, %4, %5);")
                    .arg(currentRecord.value("deposit_id").toInt())
                    .arg(currentRecord.value("id").toInt())
                    .arg(-currentRecord.value("cash").toDouble())
-                   .arg(bSetings.activityPointSettings().activityPointNumber))){
+                   .arg(bSetings.activityPointSettings().activityPointNumber)
+                   .arg(paymentMethodDialog.isTerminal()))){
         bDb.debugQuery(query);
         return;
     }

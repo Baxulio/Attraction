@@ -28,7 +28,7 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
     ui->childs_label->setText(record.value("childs").toString());
     ui->enter_number_label->setText(record.value("enter_number").toString());
     ui->enter_time_label->setText(record.value("enter_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
-
+    ui->tariff_label->setText(record.value("title").toString());
     if(active){
         ui->exit_number_label->setText(record.value("entered_childs").toString());
         ui->exit_time_label->setText(record.value("expected_exit_time").toDateTime().toString("dd.MM.yyyy    hh:mm:ss"));
@@ -46,11 +46,11 @@ void TransactionsFrame::setHeaderData(const QSqlRecord &record, const bool &acti
 void TransactionsFrame::computeTransactions(const int &id, const bool &active)
 {
     QString queryString =
-            active?QString("SELECT active_transactions.title as Действие, products.title AS Продукт, active_transactions.quantity as Количество, activity_point as Пункт, active_transactions.time as Время, active_transactions.total_price as Сумма "
+            active?QString("SELECT active_transactions.title as Действие, products.title AS Продукт, active_transactions.quantity as Количество, activity_point as Пункт, active_transactions.time as Время, active_transactions.total_price as Сумма, active_transactions.terminal as Метод "
                            "FROM active_transactions "
                            "LEFT JOIN products ON active_transactions.product_id=products.id "
                            "WHERE active_transactions.active_bracers_id=%1;").arg(id)
-                 :QString("SELECT transactions_history.title as Действие, products.title AS Продукт, transactions_history.quantity as Количество, activity_point as Пункт, transactions_history.time as Время, transactions_history.total_price as Сумма "
+                 :QString("SELECT transactions_history.title as Действие, products.title AS Продукт, transactions_history.quantity as Количество, activity_point as Пункт, transactions_history.time as Время, transactions_history.total_price as Сумма, active_transactions.terminal as Метод  "
                           "FROM transactions_history "
                           "LEFT JOIN products ON transactions_history.product_id=products.id "
                           "WHERE transactions_history.bracers_history_id=%1;").arg(id);

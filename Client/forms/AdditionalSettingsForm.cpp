@@ -26,6 +26,8 @@ AdditionalSettingsForm::~AdditionalSettingsForm()
 
 void AdditionalSettingsForm::on_refresh()
 {
+    if(!this->isVisible())return;
+
     staffModel.setTable("staff");
     if(!staffModel.select()){
         bDb.debugError(staffModel.lastError());
@@ -46,19 +48,16 @@ void AdditionalSettingsForm::on_refresh()
 
 void AdditionalSettingsForm::on_add_tariff_clicked()
 {
-    //    tariffs_model->insertRow(tariffs_model->rowCount());
+        bDb.tariffModel->insertRow(bDb.tariffModel->rowCount());
 }
 
 void AdditionalSettingsForm::on_delete_tariff_clicked()
 {
-    //    tariffs_model->removeRow(ui->tariffs_table->currentIndex().row());
+        bDb.tariffModel->removeRow(ui->tariffs_table->currentIndex().row());
 }
 
 void AdditionalSettingsForm::on_tariffs_submit_clicked()
 {
-    if(bDb.tariffModel->isDirty(bDb.tariffModel->index(0,bDb.tariffModel->fieldIndex("title")))
-            or bDb.tariffModel->isDirty(bDb.tariffModel->index(1,bDb.tariffModel->fieldIndex("title"))))
-        return;
     if(!bDb.tariffModel->submitAll())
         bDb.debugError(bDb.tariffModel->lastError());
 }

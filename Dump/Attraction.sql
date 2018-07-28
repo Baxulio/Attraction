@@ -28,14 +28,21 @@ CREATE TABLE IF NOT EXISTS `active_bracers` (
   `childs` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `entered_childs` int(11) unsigned NOT NULL DEFAULT '0',
   `comment` text,
+  `tariff_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_active_bracers_deposit` (`deposit_id`),
-  CONSTRAINT `FK_active_bracers_deposit` FOREIGN KEY (`deposit_id`) REFERENCES `deposit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+  KEY `FK_active_bracers_tariff` (`tariff_id`),
+  CONSTRAINT `FK_active_bracers_deposit` FOREIGN KEY (`deposit_id`) REFERENCES `deposit` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_active_bracers_tariff` FOREIGN KEY (`tariff_id`) REFERENCES `tariff` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы attraction.active_bracers: ~1 rows (приблизительно)
+-- Дамп данных таблицы attraction.active_bracers: ~3 rows (приблизительно)
 DELETE FROM `active_bracers`;
 /*!40000 ALTER TABLE `active_bracers` DISABLE KEYS */;
+INSERT INTO `active_bracers` (`id`, `code`, `bracer_number`, `enter_time`, `enter_number`, `expected_exit_time`, `deposit_id`, `childs`, `entered_childs`, `comment`, `tariff_id`) VALUES
+	(29, 4444, 1, NULL, NULL, NULL, 33, 0, 0, '', 2),
+	(30, 5555, 1, NULL, NULL, NULL, 34, 0, 0, '', 1),
+	(31, 2222, 4, NULL, NULL, NULL, 35, 1, 0, '', 1);
 /*!40000 ALTER TABLE `active_bracers` ENABLE KEYS */;
 
 -- Дамп структуры для таблица attraction.active_transactions
@@ -48,16 +55,23 @@ CREATE TABLE IF NOT EXISTS `active_transactions` (
   `time` datetime NOT NULL,
   `active_bracers_id` int(11) NOT NULL,
   `activity_point` tinyint(4) unsigned DEFAULT NULL,
+  `terminal` enum('Наличные','Терминал') NOT NULL DEFAULT 'Наличные',
   PRIMARY KEY (`id`),
   KEY `FK_active_transactions_active_bracers` (`active_bracers_id`),
   KEY `FK_active_transactions_products` (`product_id`),
   CONSTRAINT `FK_active_transactions_active_bracers` FOREIGN KEY (`active_bracers_id`) REFERENCES `active_bracers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_active_transactions_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы attraction.active_transactions: ~44 rows (приблизительно)
+-- Дамп данных таблицы attraction.active_transactions: ~5 rows (приблизительно)
 DELETE FROM `active_transactions`;
 /*!40000 ALTER TABLE `active_transactions` DISABLE KEYS */;
+INSERT INTO `active_transactions` (`id`, `title`, `product_id`, `quantity`, `total_price`, `time`, `active_bracers_id`, `activity_point`, `terminal`) VALUES
+	(95, 'Регистрация', NULL, 1, 20000.00, '2018-07-10 17:30:43', 29, 1, 'Наличные'),
+	(96, 'Пополнение баланса', NULL, 1, 1500.00, '2018-07-10 17:59:52', 29, 1, 'Наличные'),
+	(97, 'Регистрация', NULL, 1, 45000.00, '2018-07-10 18:02:11', 30, 1, 'Наличные'),
+	(98, 'Пополнение баланса', NULL, 1, 1500.00, '2018-07-10 18:02:11', 30, 1, 'Наличные'),
+	(99, 'Регистрация', NULL, 1, 65000.00, '2018-07-10 18:08:47', 31, 1, 'Терминал');
 /*!40000 ALTER TABLE `active_transactions` ENABLE KEYS */;
 
 -- Дамп структуры для таблица attraction.bracers_history
@@ -71,15 +85,15 @@ CREATE TABLE IF NOT EXISTS `bracers_history` (
   `exit_number` tinyint(4) NOT NULL,
   `childs` tinyint(3) NOT NULL DEFAULT '0',
   `comment` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+  `tariff_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_bracers_history_tariff` (`tariff_id`),
+  CONSTRAINT `FK_bracers_history_tariff` FOREIGN KEY (`tariff_id`) REFERENCES `tariff` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
--- Дамп данных таблицы attraction.bracers_history: ~2 rows (приблизительно)
+-- Дамп данных таблицы attraction.bracers_history: ~0 rows (приблизительно)
 DELETE FROM `bracers_history`;
 /*!40000 ALTER TABLE `bracers_history` DISABLE KEYS */;
-INSERT INTO `bracers_history` (`id`, `code`, `bracer_number`, `enter_time`, `enter_number`, `exit_time`, `exit_number`, `childs`, `comment`) VALUES
-	(1, 123, 3, '2018-07-09 03:34:03', 4, '2018-07-09 03:51:12', 3, 2, NULL),
-	(2, 213, 2, '2018-07-09 03:51:35', 6, '2018-07-09 03:53:27', 3, 2, NULL);
 /*!40000 ALTER TABLE `bracers_history` ENABLE KEYS */;
 
 -- Дамп структуры для таблица attraction.deposit
@@ -87,11 +101,15 @@ CREATE TABLE IF NOT EXISTS `deposit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cash` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы attraction.deposit: ~19 rows (приблизительно)
+-- Дамп данных таблицы attraction.deposit: ~3 rows (приблизительно)
 DELETE FROM `deposit`;
 /*!40000 ALTER TABLE `deposit` DISABLE KEYS */;
+INSERT INTO `deposit` (`id`, `cash`) VALUES
+	(33, 1500.00),
+	(34, 1500.00),
+	(35, 0.00);
 /*!40000 ALTER TABLE `deposit` ENABLE KEYS */;
 
 -- Дамп структуры для таблица attraction.products
@@ -249,7 +267,7 @@ DELETE FROM `tariff`;
 /*!40000 ALTER TABLE `tariff` DISABLE KEYS */;
 INSERT INTO `tariff` (`id`, `title`, `price`, `time_limit`, `price_limit`) VALUES
 	(1, 'Взрослый', 45000.00, 180, 150000.00),
-	(2, 'Детский', 20000.00, 0, 0.00);
+	(2, 'Детский', 20000.00, 180, 50000.00);
 /*!40000 ALTER TABLE `tariff` ENABLE KEYS */;
 
 -- Дамп структуры для таблица attraction.transactions_history
@@ -262,12 +280,13 @@ CREATE TABLE IF NOT EXISTS `transactions_history` (
   `time` datetime NOT NULL,
   `bracers_history_id` int(11) NOT NULL,
   `activity_point` tinyint(4) unsigned DEFAULT NULL,
+  `terminal` enum('Наличные','Терминал') NOT NULL DEFAULT 'Наличные',
   PRIMARY KEY (`id`),
   KEY `FK_active_transactions_active_bracers` (`bracers_history_id`),
   KEY `FK_transactions_history_products` (`product_id`),
   CONSTRAINT `FK_transactions_history_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `transactions_history_ibfk_1` FOREIGN KEY (`bracers_history_id`) REFERENCES `bracers_history` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- Дамп данных таблицы attraction.transactions_history: ~0 rows (приблизительно)
 DELETE FROM `transactions_history`;
@@ -284,6 +303,8 @@ CREATE DEFINER=`root`@`%` PROCEDURE `add_cash`(
 	IN `b_activity_point` INT
 
 
+,
+	IN `b_terminal` CHAR(50)
 )
 BEGIN 
 
@@ -293,8 +314,8 @@ SET b_result_cash = (SELECT cash FROM deposit WHERE id=b_deposit_id)+b_cash;
 
 UPDATE deposit SET cash=b_result_cash WHERE id=b_deposit_id; 
 
-INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point) 
-VALUES ('Пополнение баланса', b_cash, SYSDATE(), b_bracer_id, b_activity_point);
+INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point, terminal) 
+VALUES ('Пополнение баланса', b_cash, SYSDATE(), b_bracer_id, b_activity_point, b_terminal);
 
 END//
 DELIMITER ;
@@ -307,6 +328,8 @@ CREATE DEFINER=`root`@`%` PROCEDURE `enter`(
 
 
 
+,
+	IN `b_tariff_id` INT
 )
 BEGIN
 
@@ -318,7 +341,7 @@ SELECT childs, entered_childs FROM active_bracers WHERE id=b_bracer_id INTO b_ch
 IF b_entered_childs<b_childs THEN
 	UPDATE active_bracers SET entered_childs=b_entered_childs+1 WHERE id=b_bracer_id;
 ELSE
-	UPDATE active_bracers SET enter_time=SYSDATE(), enter_number=b_bareer, expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=1) MINUTE WHERE id=b_bracer_id;
+	UPDATE active_bracers SET enter_time=SYSDATE(), enter_number=b_bareer, expected_exit_time=SYSDATE() + INTERVAL (SELECT time_limit FROM tariff WHERE id=b_tariff_id) MINUTE WHERE id=b_bracer_id;
 END IF;
 
 END//
@@ -367,6 +390,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `move_to_history`(
 
 
 
+
 )
 BEGIN
 
@@ -378,15 +402,15 @@ SELECT entered_childs FROM active_bracers WHERE id=b_bracer_id INTO b_entered_ch
 IF b_entered_childs>0 THEN
 	UPDATE active_bracers SET entered_childs=b_entered_childs-1 WHERE id=b_bracer_id;
 ELSE
-	INSERT INTO bracers_history(code, bracer_number, enter_time, enter_number, exit_time, exit_number, childs, comment)
-	SELECT code, bracer_number, enter_time, enter_number, SYSDATE(), b_exit_number, childs, comment
+	INSERT INTO bracers_history(code, bracer_number, enter_time, enter_number, exit_time, exit_number, childs, comment, tariff_id)
+	SELECT code, bracer_number, enter_time, enter_number, SYSDATE(), b_exit_number, childs, comment, tariff_id
 	FROM active_bracers
 	WHERE id = b_bracer_id;
 
 	SET b_last_insert_id=LAST_INSERT_ID();
 
-	INSERT INTO transactions_history(title, product_id, quantity, total_price, time, bracers_history_id, activity_point)
-	SELECT title, product_id, quantity, total_price, time, b_last_insert_id, activity_point
+	INSERT INTO transactions_history(title, product_id, quantity, total_price, time, bracers_history_id, activity_point, termianl)
+	SELECT title, product_id, quantity, total_price, time, b_last_insert_id, activity_point, terminal
 	FROM active_transactions
 	WHERE active_bracers_id = b_bracer_id;
 
@@ -454,6 +478,10 @@ CREATE DEFINER=`root`@`%` PROCEDURE `register`(
 
 
 
+,
+	IN `b_terminal` CHAR(50),
+	IN `b_tariff_id` INT
+
 )
     COMMENT 'Registers bracer'
 BEGIN
@@ -464,15 +492,15 @@ DECLARE b_bracer_id INT;
 INSERT INTO deposit (cash) VALUES (b_cash);
 SET b_deposit_id = LAST_INSERT_ID();
 
-INSERT INTO active_bracers (code, bracer_number, deposit_id, childs, comment) VALUES (b_code, b_bracer_number, b_deposit_id, b_childs, b_comment);
+INSERT INTO active_bracers (code, bracer_number, deposit_id, childs, comment, tariff_id) VALUES (b_code, b_bracer_number, b_deposit_id, b_childs, b_comment, b_tariff_id);
 SET b_bracer_id = LAST_INSERT_ID();
 
-INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point) 
-VALUES ('Регистрация', (SELECT price FROM tariff WHERE id=1)+b_childs*(SELECT price FROM tariff WHERE id=2), SYSDATE(), b_bracer_id, b_activity_point);
+INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point, terminal) 
+VALUES ('Регистрация', (SELECT price FROM tariff WHERE id=b_tariff_id)+b_childs*(SELECT price FROM tariff WHERE title='Детский'), SYSDATE(), b_bracer_id, b_activity_point, b_terminal);
 
 IF b_cash>0 THEN
-	INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point) 
-	VALUES ('Пополнение баланса', b_cash, SYSDATE(), b_bracer_id, b_activity_point);
+	INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point, terminal) 
+	VALUES ('Пополнение баланса', b_cash, SYSDATE(), b_bracer_id, b_activity_point, b_terminal);
 END IF;
 
 END//
@@ -494,11 +522,14 @@ CREATE DEFINER=`root`@`%` PROCEDURE `return_debt`(
 ,
 	IN `b_activity_point` INT
 
+
+,
+	IN `b_terminal` CHAR(50)
 )
 BEGIN
 
-INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point) 
-VALUES ('Оплата', b_cash, SYSDATE(), b_bracer_id, b_activity_point);
+INSERT INTO active_transactions (title, total_price, time, active_bracers_id, activity_point, terminal) 
+VALUES ('Оплата', b_cash, SYSDATE(), b_bracer_id, b_activity_point, b_terminal);
 
 UPDATE deposit SET cash='0' WHERE  id=b_deposit_id;
 

@@ -32,6 +32,9 @@ private:
     QSqlTableModel *historyModel;
     ProxyModel *proxyModel;
 
+private:
+    void updateInfo();
+
 signals:
     void back();
 };

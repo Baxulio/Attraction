@@ -24,9 +24,7 @@ private slots:
     void on_back_but_clicked();
     void on_clean_but_clicked();
     void on_filter_but_clicked();
-
     void on_time_out_but_clicked(bool checked);
-
     void on_warning_but_clicked(bool checked);
 
 private:
@@ -35,6 +33,9 @@ private:
     DatabaseManager &bDb;
     QSqlTableModel *activeModel;
     ProxyModel *proxyModel;
+
+private:
+    void updateInfo();
 
 signals:
     void back();

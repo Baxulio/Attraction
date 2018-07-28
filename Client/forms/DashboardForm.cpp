@@ -1,9 +1,11 @@
-#include "DashboardForm.h"
+﻿#include "DashboardForm.h"
 #include "ui_DashboardForm.h"
 
 #include <QItemSelectionModel>
+#include "dialogs/BracersFilterDialog.h"
 
 #include <QDebug>
+
 DashboardForm::DashboardForm(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DashboardForm),
@@ -44,32 +46,29 @@ DashboardForm::~DashboardForm()
 
 void DashboardForm::on_refresh()
 {
+    if(!this->isVisible())return;
+
     activeModel->setTable("active_bracers");
     if(!activeModel->select()){
         bDb.debugError(activeModel->lastError());
         return ;
     }
-    QSqlQuery query;
-    if(!query.exec(QString("SELECT SUM(total_price) AS SUM "
-                           "FROM active_transactions;"))){
-        bDb.debugQuery(query);
-        return;
-    }
-    query.next();
-    if(!query.isValid())
-        ui->total_price_label->setText("0");
-    else ui->total_price_label->setText(query.value("SUM").toString());
 
-    int rows = activeModel->rowCount();
-    int children = 0;
+    ui->model_table->hideColumn(activeModel->fieldIndex("id"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("code"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("deposit_id"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("cash"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("childs"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("entered_childs"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("comment"));
+    ui->model_table->hideColumn(activeModel->fieldIndex("tariff_id"));
 
-    QSqlRecord rec;
-    for(int i=0; i<rows; i++){
-        rec = activeModel->record(i);
-        children += rec.value("childs").toInt();
-    }
-    ui->children_label->setText(QString::number(children));
-    ui->people_label->setText(QString::number(rows));
+    activeModel->setHeaderData(activeModel->fieldIndex("bracer_number"),Qt::Horizontal,"Номер браслета");
+    activeModel->setHeaderData(activeModel->fieldIndex("enter_time"),Qt::Horizontal,"Время входа");
+    activeModel->setHeaderData(activeModel->fieldIndex("enter_number"),Qt::Horizontal,"Вход №");
+    activeModel->setHeaderData(activeModel->fieldIndex("expected_exit_time"),Qt::Horizontal,"Ожидаемый выход");
+
+    updateInfo();
 }
 
 void DashboardForm::on_back_but_clicked()
@@ -79,32 +78,32 @@ void DashboardForm::on_back_but_clicked()
 
 void DashboardForm::on_clean_but_clicked()
 {
-    ui->bracer_number_spin->setValue(0);
+    proxyModel->setTariffId(0);
     proxyModel->setBracerNumber(0);
-
-    ui->enter_number_spin->setValue(0);
     proxyModel->setEnterNumber(0);
-
-    ui->childs_spin->setValue(0);
     proxyModel->setChildsNumber(0);
-
-    ui->in_from_dateTime->setDateTime(QDateTime());
     proxyModel->setIn_time_from(QDateTime());
-
-    ui->in_to_dateTime->setDateTime(QDateTime());
     proxyModel->setIn_time_to(QDateTime());
-
     proxyModel->invalidate();
+    updateInfo();
 }
 
 void DashboardForm::on_filter_but_clicked()
 {
-    proxyModel->setBracerNumber(ui->bracer_number_spin->value());
-    proxyModel->setEnterNumber(ui->enter_number_spin->value());
-    proxyModel->setChildsNumber(ui->childs_spin->value());
-    proxyModel->setIn_time_from(ui->in_from_dateTime->dateTime());
-    proxyModel->setIn_time_to(ui->in_to_dateTime->dateTime());
+    BracersFilterDialog dialog(this);
+    if(dialog.exec() != QDialog::Accepted){
+        return;
+    }
+
+    proxyModel->setTariffId(dialog.tariff());
+    proxyModel->setBracerNumber(dialog.bracerNumber());
+    proxyModel->setEnterNumber(dialog.enterNumber());
+    proxyModel->setChildsNumber(dialog.childs());
+    proxyModel->setIn_time_from(dialog.enterTimeFrom());
+    proxyModel->setIn_time_to(dialog.enterTimeTo());
+
     proxyModel->invalidate();
+    updateInfo();
 }
 
 void DashboardForm::on_time_out_but_clicked(bool checked)
@@ -115,4 +114,36 @@ void DashboardForm::on_time_out_but_clicked(bool checked)
 void DashboardForm::on_warning_but_clicked(bool checked)
 {
     proxyModel->setWarningEnabled(checked);
+}
+
+void DashboardForm::updateInfo()
+{
+    int rows = proxyModel->rowCount();
+    int tariff_rows = bDb.tariffModel->rowCount();
+    int tariff_col = activeModel->fieldIndex("tariff_id");
+
+    QString temp;
+    for(int i=0; i<tariff_rows; i++){
+        int tariff_count=0;
+        for(int j=0; j<rows; j++){
+            if(proxyModel->data(proxyModel->index(j,tariff_col),Qt::EditRole).toInt()==bDb.tariffModel->record(i).value("id").toInt())
+                tariff_count++;
+        }
+        temp += QString("<span style=\" font-size:14pt; color:#55aaff;\">%1 </span>"
+                        "<span style=\" color:#646464;\">%2  </span>")
+                .arg(tariff_count)
+                .arg(bDb.tariffModel->record(i).value("title").toString());
+    }
+
+    int childs = 0;
+    int childs_col = activeModel->fieldIndex("childs");
+    for(int j=0; j<rows; j++){
+        childs+=proxyModel->data(proxyModel->index(j,childs_col), Qt::EditRole).toInt();
+    }
+    if(childs)
+        temp += QString("<span style=\" font-size:14pt; color:#55aaff;\">+%1 </span>"
+                    "<span style=\" color:#646464;\">Детей без браслета</span></p>")
+            .arg(childs);
+
+    ui->info_label->setText(temp);
 }

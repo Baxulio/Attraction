@@ -25,10 +25,21 @@ RegisterForm::~RegisterForm()
     delete ui;
 }
 
+void RegisterForm::updatePriceLabel()
+{
+    double price = bDb.tariffModel->record(ui->tariff_comboBox->currentIndex()).value("price").toDouble()+
+            ui->childs_spinBox->value()*bDb.tariffModel->record(ui->tariff_comboBox->findText("Детский")).value("price").toDouble()+
+            ui->cash_doubleSpinBox->value();
+
+    ui->price_label->setText(QString::number(price, 'f', 2));
+}
+
 void RegisterForm::on_refresh()
 {
     if(!this->isVisible())return;
-    ui->cash_doubleSpinBox->setMaximum(bDb.tariffModel->record(0).value("price_limit").toDouble());
+
+    ui->tariff_comboBox->setModel(bDb.tariffModel);
+    ui->tariff_comboBox->setModelColumn(1);
 }
 
 void RegisterForm::on_back_pushButton_clicked()
@@ -71,13 +82,15 @@ void RegisterForm::on_register_bracer_but_clicked()
                              .arg(query.value("enter_number").toInt()));
         return;
     }
-    if(!query.exec(QString("CALL `register`('%1', '%2', '%3','%4','%5','%6');")
+    if(!query.exec(QString("CALL `register`('%1', '%2', '%3','%4','%5','%6' ,'%7', %8);")
                    .arg(ui->childs_spinBox->value())
                    .arg(ui->bracer_number_spinBox->value())
                    .arg(code)
                    .arg(ui->cash_doubleSpinBox->value())
                    .arg(ui->comment_textEdit->toPlainText())
-                   .arg(bSetings.activityPointSettings().activityPointNumber)))
+                   .arg(bSetings.activityPointSettings().activityPointNumber)
+                   .arg(ui->terminal_radio->isChecked()?"Терминал":"Наличные")
+                   .arg(bDb.tariffModel->record(ui->tariff_comboBox->currentIndex()).value("id").toInt())))
         bDb.debugQuery(query);
 
     QMessageBox::information(this, "Успех",
@@ -122,14 +135,34 @@ void RegisterForm::on_drop_bracer_but_clicked()
 
 void RegisterForm::on_bracer_number_spinBox_valueChanged(int arg1)
 {
-    ui->childs_spinBox->setValue(0);
-
-    arg1?ui->price_label->setText(bDb.tariffModel->record(0).value("price").toString()):
-         ui->price_label->setText("0");
+    Q_UNUSED(arg1)
+    updatePriceLabel();
 }
 
 void RegisterForm::on_childs_spinBox_valueChanged(int arg1)
 {
-    if(ui->bracer_number_spinBox->value())
-        ui->price_label->setText(QString("%1").arg(bDb.tariffModel->record(0).value("price").toDouble()+bDb.tariffModel->record(1).value("price").toDouble()*arg1));
+    Q_UNUSED(arg1)
+    updatePriceLabel();
+}
+
+void RegisterForm::on_tariff_comboBox_currentIndexChanged(int index)
+{
+    ui->cash_doubleSpinBox->setMaximum(bDb.tariffModel->record(index).value("price_limit").toDouble());
+    updatePriceLabel();
+}
+
+void RegisterForm::on_resetFields_but_clicked()
+{
+    ui->tariff_comboBox->setCurrentIndex(0);
+    ui->bracer_number_spinBox->setValue(0);
+    ui->childs_spinBox->setValue(0);
+    ui->cash_doubleSpinBox->setValue(0);
+    ui->real_radio->setChecked(true);
+    ui->comment_textEdit->clear();
+}
+
+void RegisterForm::on_cash_doubleSpinBox_valueChanged(double arg1)
+{
+    Q_UNUSED(arg1)
+    updatePriceLabel();
 }

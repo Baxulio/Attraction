@@ -58,6 +58,8 @@ ProductsForm::~ProductsForm()
 
 void ProductsForm::on_refresh()
 {
+    if(!this->isVisible())return;
+
     product_types_model->setTable("product_types");
     if(!product_types_model->select()){
         bDb.debugError(product_types_model->lastError());

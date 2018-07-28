@@ -33,7 +33,7 @@ void UniteForm::on_add_product_type_but_clicked()
     if(!code)return;
 
     QSqlQuery query;
-    if(!query.exec(QString("SELECT * FROM `Attraction`.`active_bracers` WHERE code=%1").arg(code))){
+    if(!query.exec(QString("SELECT * FROM `attraction`.`active_bracers` WHERE code=%1").arg(code))){
         bDb.debugQuery(query);
         return;
     }
@@ -62,7 +62,7 @@ void UniteForm::on_add_product_type_but_clicked()
     ui->union_tableWidget->model()->setData(ui->union_tableWidget->model()->index(countRow,1),query.value("bracer_number").toInt());
     ui->union_tableWidget->model()->setData(ui->union_tableWidget->model()->index(countRow,3),query.value("deposit_id").toInt());
 
-    if(!query.exec(QString("SELECT * FROM `Attraction`.`deposit` WHERE id=%1").arg(query.value("deposit_id").toInt()))){
+    if(!query.exec(QString("SELECT * FROM `attraction`.`deposit` WHERE id=%1").arg(query.value("deposit_id").toInt()))){
         ui->union_tableWidget->removeRow(countRow);
         bDb.debugQuery(query);
         return;
@@ -110,7 +110,7 @@ void UniteForm::on_unite_bracers_pushButton_clicked()
                          QString("Результирующий депозит будет составлять %1. \nПродолжить операцию?").arg(total))
             !=QMessageBox::Yes)return;
 
-    QString query2 = QString("UPDATE `Attraction`.`active_bracers` SET `deposit_id`=%1 WHERE `code`= %2 ")
+    QString query2 = QString("UPDATE `attraction`.`active_bracers` SET `deposit_id`=%1 WHERE `code`= %2 ")
             .arg(depositId)
             .arg(ui->union_tableWidget->model()->data(ui->union_tableWidget->model()->index(1,0)).toUInt());
 
@@ -120,7 +120,7 @@ void UniteForm::on_unite_bracers_pushButton_clicked()
     query2+=";";
 
     if(!query.exec(QString("CALL `unite_bracers`('%1', '%2')")
-                   .arg(QString("UPDATE `Attraction`.`deposit` SET `cash`=%1 WHERE `id`=%2;")
+                   .arg(QString("UPDATE `attraction`.`deposit` SET `cash`=%1 WHERE `id`=%2;")
                        .arg(total).arg(depositId)).arg(query2))){
         bDb.debugQuery(query);
         return;

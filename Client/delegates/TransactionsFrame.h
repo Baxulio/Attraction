@@ -23,7 +23,7 @@ public:
     void setHeaderData(const QSqlRecord &record, const bool &active);
     void computeTransactions(const int &id, const bool &active);
 
-private slots:
+public slots:
     void on_print_but_clicked();
 
 private:

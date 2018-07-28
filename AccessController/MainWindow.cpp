@@ -27,23 +27,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(!bSettings->modeSettings().mode and !server->listen(QHostAddress::AnyIPv4, 1234))
         close();
-
     connect(server, &QTcpServer::newConnection, [this]{
         QTcpSocket *socket = server->nextPendingConnection();
         connect(socket, &QTcpSocket::readyRead, [this,socket]{
-            QByteArray arr = socket->readAll();
-            QDataStream in(&arr,QIODevice::ReadOnly);
-            in.setVersion(QDataStream::Qt_5_5);
-            if(in.status()==QDataStream::ReadCorruptData){
-                return;
-            }
-            quint32 code=0;
-            in>>code;
 
-            if(code){
-                fromClient=true;
-                wiegandCallback(code);
-            }
+            fromClient=true;
+            wiegandCallback(socket->readAll().toULongLong());
             //            if(arr==QByteArray::fromStdString("kuwoy")){
             //                fromClient=true;
             //                openBareer();
@@ -192,7 +181,7 @@ bool MainWindow::enter(quint32 code)
         return true;
     }
 
-    if(!query.exec(QString("SELECT id FROM active_bracers WHERE code=%1 AND ISNULL(enter_time);").arg(code))){
+    if(!query.exec(QString("SELECT id, tariff_id FROM active_bracers WHERE code=%1 AND ISNULL(enter_time);").arg(code))){
         bDb.debugQuery(query);
         return false;
     }
@@ -255,9 +244,10 @@ void MainWindow::interrupt()
             break;
         }
 
-        if(!query.exec(QString("CALL enter('%1','%2');")
-                            .arg(bSettings->modeSettings().bareerNumber)
-                            .arg(exitRec.value("id").toInt()))){
+        if(!query.exec(QString("CALL enter('%1','%2', '%3');")
+                       .arg(bSettings->modeSettings().bareerNumber)
+                       .arg(enterRec.value("id").toInt())
+                       .arg(enterRec.value("tariff_id").toInt()))){
             bDb.debugQuery(query);
             return;
         }
@@ -268,8 +258,8 @@ void MainWindow::interrupt()
     case false: {
         if(fromClient){
             if(!query.exec(QString("CALL move_to_history('%1','%2');")
-                                .arg(bSettings->modeSettings().bareerNumber)
-                                .arg(exitRec.value("id").toInt()))){
+                           .arg(bSettings->modeSettings().bareerNumber)
+                           .arg(exitRec.value("id").toInt()))){
                 bDb.debugQuery(query);
                 return;
             }

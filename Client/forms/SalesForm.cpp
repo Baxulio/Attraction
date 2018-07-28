@@ -113,6 +113,8 @@ SalesForm::~SalesForm()
 
 void SalesForm::on_refresh()
 {
+    if(!this->isVisible())return;
+
     on_clear_but_clicked();
     typesModel.setTable("product_types");
     if(!typesModel.select()){

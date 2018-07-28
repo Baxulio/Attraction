@@ -10,6 +10,7 @@ class ProxyModel : public QSortFilterProxyModel
 public:
     ProxyModel(QObject *parent = 0);
 
+    void setTariffId(const int &tariffId){tariff_id=tariffId;}
     void setBracerNumber(const int &num){bracer_number=num;}
     void setEnterNumber(const int &num){enter_number=num;}
     void setChildsNumber(const int &num){childs_number=num;}
@@ -33,6 +34,7 @@ private:
     QDateTime in_time_from;
     QDateTime in_time_to;
 
+    int tariff_id;
     int bracer_number;
     int enter_number;
     int childs_number;
@@ -49,11 +51,9 @@ private:
     // QSortFilterProxyModel interface
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
-    bool filterAcceptsColumn(int source_column, const QModelIndex &source_parent) const override;
 
     // QAbstractItemModel interface
 public:
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     QVariant data(const QModelIndex &index, int role) const override;
 };
 

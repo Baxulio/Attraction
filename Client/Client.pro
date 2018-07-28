@@ -44,7 +44,13 @@ SOURCES += \
     forms/SalesForm.cpp \
     models/ProductTypesProxyModel.cpp \
     models/ProductsProxyModel.cpp \
-    models/CartProxyModel.cpp
+    models/CartProxyModel.cpp \
+    dialogs/PaymentMethodDialog.cpp \
+    forms/BarStatusForm.cpp \
+    forms/TransactionsForm.cpp \
+    forms/StaffForm.cpp \
+    dialogs/BracersFilterDialog.cpp \
+    models/TransactionsProxyModel.cpp
 
 HEADERS += \
         MainWindow.h \
@@ -64,7 +70,13 @@ HEADERS += \
     forms/SalesForm.h \
     models/ProductTypesProxyModel.h \
     models/ProductsProxyModel.h \
-    models/CartProxyModel.h
+    models/CartProxyModel.h \
+    dialogs/PaymentMethodDialog.h \
+    forms/BarStatusForm.h \
+    forms/TransactionsForm.h \
+    forms/StaffForm.h \
+    dialogs/BracersFilterDialog.h \
+    models/TransactionsProxyModel.h
 
 FORMS += \
         MainWindow.ui \
@@ -78,7 +90,12 @@ FORMS += \
     forms/DashboardForm.ui \
     forms/AdditionalSettingsForm.ui \
     delegates/TransactionsFrame.ui \
-    forms/SalesForm.ui
+    forms/SalesForm.ui \
+    dialogs/PaymentMethodDialog.ui \
+    forms/BarStatusForm.ui \
+    forms/TransactionsForm.ui \
+    forms/StaffForm.ui \
+    dialogs/BracersFilterDialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Core/release/ -lCore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Core/debug/ -lCore
